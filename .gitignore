@@ -43,6 +43,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+/.android
+local.properties
 
 # Devenv
 .devenv*
@@ -53,3 +55,6 @@ devenv.local.nix
 
 # pre-commit
 .pre-commit-config.yaml
+
+# ai
+/instructions/*.md
