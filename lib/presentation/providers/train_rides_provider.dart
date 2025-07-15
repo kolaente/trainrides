@@ -124,10 +124,9 @@ Future<List<model.TrainRide>> trainRidesByDateRange(
 @riverpod
 Future<model.TrainRide?> trainRideById(TrainRideByIdRef ref, int id) async {
   final api = ref.read(baserowApiProvider);
-  final allRides = await api.getTrainRides(orderBy: '-field_13814');
-
+  
   try {
-    return allRides.firstWhere((ride) => ride.id == id);
+    return await api.getTrainRideById(id);
   } catch (e) {
     return null;
   }
