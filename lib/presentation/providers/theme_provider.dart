@@ -41,13 +41,72 @@ class ThemeNotifier extends _$ThemeNotifier {
 }
 
 class AppTheme {
+  // Vibrant gradient color palette
+  static const Color _color1 = Color(0xFFf72585); // Pink
+  static const Color _color2 = Color(0xFFb5179e); // Purple pink
+  static const Color _color3 = Color(0xFF7209b7); // Purple
+  static const Color _color4 = Color(0xFF560bad); // Dark purple
+  static const Color _color5 = Color(0xFF480ca8); // Darker purple
+  static const Color _color6 = Color(0xFF3a0ca3); // Deep purple
+  static const Color _color7 = Color(0xFF3f37c9); // Blue purple
+  static const Color _color8 = Color(0xFF4361ee); // Blue
+  static const Color _color9 = Color(0xFF4895ef); // Light blue
+  static const Color _color10 = Color(0xFF4cc9f0); // Cyan
+
+  // Baserow color mapping for type labels
+  static const Map<String, Color> baserowColors = {
+    'dark-blue': Color(0xFF1E3A8A),
+    'light-pink': Color(0xFFFBBBBB),
+    'darker-gray': Color(0xFF374151),
+    'light-yellow': Color(0xFFFEF3C7),
+    'darker-purple': Color(0xFF581C87),
+    'light-blue': Color(0xFFBFDBFE),
+  };
+
+  // Helper method to get Baserow color for a type value
+  static Color getBaserowColorForType(String? typeValue) {
+    if (typeValue == null) return baserowColors['dark-blue']!;
+
+    // Map type values to their Baserow colors based on fields.json
+    switch (typeValue) {
+      case 'DPSG Bund':
+        return baserowColors['dark-blue']!;
+      case 'DPSG Sonstiges':
+        return baserowColors['light-pink']!;
+      case 'Spaß':
+        return baserowColors['darker-gray']!;
+      case 'Hannah besuchen':
+        return baserowColors['light-yellow']!;
+      case 'WSJ':
+        return baserowColors['darker-purple']!;
+      case 'Ironscout 26 Orga':
+        return baserowColors['light-blue']!;
+      default:
+        return baserowColors['dark-blue']!;
+    }
+  }
+
+  // Helper method to get appropriate text color for a background color
+  static Color getTextColorForBackground(Color backgroundColor) {
+    // Calculate the luminance to determine if we should use light or dark text
+    final luminance = backgroundColor.computeLuminance();
+    return luminance > 0.5 ? Colors.black : Colors.white;
+  }
+
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: Colors.blue,
-        brightness: Brightness.light,
-      ),
+      colorScheme:
+          ColorScheme.fromSeed(
+            seedColor: _color8,
+            brightness: Brightness.light,
+          ).copyWith(
+            primary: _color8,
+            secondary: _color5,
+            tertiary: _color2,
+            surface: const Color(0xFFFAFAFA),
+            surfaceVariant: const Color(0xFFF5F5F5),
+          ),
       appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
       cardTheme: CardThemeData(
         elevation: 2,
@@ -79,10 +138,17 @@ class AppTheme {
   static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: Colors.blue,
-        brightness: Brightness.dark,
-      ),
+      colorScheme:
+          ColorScheme.fromSeed(
+            seedColor: _color8,
+            brightness: Brightness.dark,
+          ).copyWith(
+            primary: _color8,
+            secondary: _color5,
+            tertiary: _color2,
+            surface: const Color(0xFF1A1A1A),
+            surfaceVariant: const Color(0xFF2D2D2D),
+          ),
       appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
       cardTheme: CardThemeData(
         elevation: 2,

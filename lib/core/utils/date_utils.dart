@@ -2,8 +2,8 @@ import 'package:intl/intl.dart';
 
 class DateUtils {
   static const String apiDateFormat = 'yyyy-MM-dd';
-  static const String displayDateFormat = 'dd/MM/yyyy';
-  static const String displayDateTimeFormat = 'dd/MM/yyyy HH:mm';
+  static const String displayDateFormat = 'yyyy-MM-dd';
+  static const String displayDateTimeFormat = 'yyyy-MM-ddTHH:mm:ss.SSSZ';
 
   static final DateFormat _apiFormatter = DateFormat(apiDateFormat);
   static final DateFormat _displayFormatter = DateFormat(displayDateFormat);

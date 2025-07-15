@@ -204,7 +204,7 @@ class TrainRide {
 
   String get displayTitle => '$from → $to';
   String get displayDate => date.toIso8601String().split('T').first;
-  String get displayPrice => '€${price.toStringAsFixed(2)}';
+  String get displayPrice => '${price.toStringAsFixed(2)} €';
   String get displayDateTime =>
       '${date.toIso8601String().split('T').first} $displayTitle';
 }

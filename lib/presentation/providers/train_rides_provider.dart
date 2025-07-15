@@ -36,7 +36,7 @@ class TrainRidesNotifier extends _$TrainRidesNotifier {
       final api = ref.read(baserowApiProvider);
       await api.updateTrainRide(ride);
       ref.invalidateSelf();
-      
+
       // Invalidate the individual ride cache
       if (ride.id != null) {
         ref.invalidate(trainRideByIdProvider(ride.id!));
@@ -51,7 +51,7 @@ class TrainRidesNotifier extends _$TrainRidesNotifier {
       final api = ref.read(baserowApiProvider);
       await api.deleteTrainRide(id);
       ref.invalidateSelf();
-      
+
       // Invalidate the individual ride cache
       ref.invalidate(trainRideByIdProvider(id));
     } catch (error, stackTrace) {
@@ -139,7 +139,7 @@ Future<List<model.TrainRide>> trainRidesByDateRange(
 @riverpod
 Future<model.TrainRide?> trainRideById(TrainRideByIdRef ref, int id) async {
   final api = ref.read(baserowApiProvider);
-  
+
   try {
     return await api.getTrainRideById(id);
   } catch (e) {

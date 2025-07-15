@@ -28,7 +28,7 @@ in
     googleTVAddOns.enable = false;
     ndk = {
       enable = true;
-      version = [ "23.1.7779620" "26.1.10909125" ];
+      version = [ "23.1.7779620" "26.3.11579264" ];
     };
     extras = [ ];
     emulator = {

@@ -52,7 +52,7 @@
     "number_negative": false,
     "number_prefix": "",
     "number_suffix": "€",
-    "number_separator": "PERIOD_COMMA",
+    "number_separator": "",
     "number_default": null
   },
   {
