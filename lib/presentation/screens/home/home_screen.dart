@@ -305,7 +305,10 @@ class TrainRideListItem extends StatelessWidget {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
-        side: BorderSide(color: Colors.grey.shade300, width: 1),
+        side: BorderSide(
+          color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+          width: 1,
+        ),
       ),
       child: InkWell(
         onTap: onTap,
@@ -314,7 +317,7 @@ class TrainRideListItem extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surface,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
