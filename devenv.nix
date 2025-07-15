@@ -1,5 +1,8 @@
 { pkgs, lib, config, inputs, ... }:
 
+let
+  pkgs-unstable = import inputs.nixpkgs-unstable { system = pkgs.stdenv.system; };
+in
 {
   enterShell = ''
     export CHROME_EXECUTABLE=`which chromium`
@@ -15,7 +18,10 @@
 
   android = {
     enable = true;
-    flutter.enable = true;
+    flutter = {
+      enable = true;
+      package = pkgs-unstable.flutter;
+    };
 
     platforms.version = [ "31" "33" "34" ];
     cmake.version = [ "3.18.1" "3.22.1" ];
