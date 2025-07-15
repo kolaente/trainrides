@@ -14,7 +14,7 @@ class TrainRidesNotifier extends _$TrainRidesNotifier {
   @override
   Future<List<model.TrainRide>> build() async {
     final api = ref.read(baserowApiProvider);
-    return await api.getTrainRides();
+    return await api.getTrainRides(orderBy: '-field_13814');
   }
 
   Future<void> refresh() async {
@@ -29,7 +29,7 @@ class TrainRidesNotifier extends _$TrainRidesNotifier {
       await api.createTrainRide(ride);
       
       // Refresh the list after adding
-      final updatedRides = await api.getTrainRides();
+      final updatedRides = await api.getTrainRides(orderBy: '-field_13814');
       state = AsyncValue.data(updatedRides);
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
@@ -44,7 +44,7 @@ class TrainRidesNotifier extends _$TrainRidesNotifier {
       await api.updateTrainRide(ride);
       
       // Refresh the list after updating
-      final updatedRides = await api.getTrainRides();
+      final updatedRides = await api.getTrainRides(orderBy: '-field_13814');
       state = AsyncValue.data(updatedRides);
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
@@ -59,7 +59,7 @@ class TrainRidesNotifier extends _$TrainRidesNotifier {
       await api.deleteTrainRide(id);
       
       // Refresh the list after deleting
-      final updatedRides = await api.getTrainRides();
+      final updatedRides = await api.getTrainRides(orderBy: '-field_13814');
       state = AsyncValue.data(updatedRides);
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
@@ -76,7 +76,7 @@ class TrainRideSearchNotifier extends _$TrainRideSearchNotifier {
     }
     
     final api = ref.read(baserowApiProvider);
-    final allRides = await api.getTrainRides();
+    final allRides = await api.getTrainRides(orderBy: '-field_13814');
     
     // Simple search in from, to, and details fields
     return allRides.where((ride) {
@@ -97,7 +97,7 @@ class TrainRideSearchNotifier extends _$TrainRideSearchNotifier {
     
     try {
       final api = ref.read(baserowApiProvider);
-      final allRides = await api.getTrainRides();
+      final allRides = await api.getTrainRides(orderBy: '-field_13814');
       
       final results = allRides.where((ride) {
         final searchText = query.toLowerCase();
@@ -120,7 +120,7 @@ Future<List<model.TrainRide>> trainRidesByDateRange(
   DateTime end,
 ) async {
   final api = ref.read(baserowApiProvider);
-  final allRides = await api.getTrainRides();
+  final allRides = await api.getTrainRides(orderBy: '-field_13814');
   
   return allRides.where((ride) {
     return ride.date.isAfter(start.subtract(const Duration(days: 1))) &&
@@ -134,7 +134,7 @@ Future<model.TrainRide?> trainRideById(
   int id,
 ) async {
   final api = ref.read(baserowApiProvider);
-  final allRides = await api.getTrainRides();
+  final allRides = await api.getTrainRides(orderBy: '-field_13814');
   
   try {
     return allRides.firstWhere((ride) => ride.id == id);
