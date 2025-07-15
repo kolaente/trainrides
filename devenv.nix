@@ -23,12 +23,13 @@ in
       package = pkgs-unstable.flutter;
     };
 
-    platforms.version = [ "31" "33" "34" ];
+    platforms.version = [ "31" "33" "34" "35" ];
+    buildTools.version = [ "34.0.0" ];
     cmake.version = [ "3.18.1" "3.22.1" ];
     googleTVAddOns.enable = false;
     ndk = {
       enable = true;
-      version = [ "23.1.7779620" "26.3.11579264" ];
+      version = [ "23.1.7779620" "26.3.11579264" "27.0.12077973" ];
     };
     extras = [ ];
     emulator = {
