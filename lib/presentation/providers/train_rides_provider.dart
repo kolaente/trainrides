@@ -70,7 +70,7 @@ class TrainRideSearchNotifier extends _$TrainRideSearchNotifier {
 
     // Use shared cache from main provider
     final allRidesAsync = ref.watch(trainRidesNotifierProvider);
-    final allRides = await allRidesAsync.when(
+    final allRides = allRidesAsync.when(
       data: (rides) => rides,
       loading: () => <model.TrainRide>[],
       error: (error, stack) => throw error,
@@ -96,7 +96,7 @@ class TrainRideSearchNotifier extends _$TrainRideSearchNotifier {
     try {
       // Use shared cache from main provider
       final allRidesAsync = ref.read(trainRidesNotifierProvider);
-      final allRides = await allRidesAsync.when(
+      final allRides = allRidesAsync.when(
         data: (rides) => rides,
         loading: () => <model.TrainRide>[],
         error: (error, stack) => throw error,
@@ -124,7 +124,7 @@ Future<List<model.TrainRide>> trainRidesByDateRange(
 ) async {
   // Use shared cache from main provider
   final allRidesAsync = ref.watch(trainRidesNotifierProvider);
-  final allRides = await allRidesAsync.when(
+  final allRides = allRidesAsync.when(
     data: (rides) => rides,
     loading: () => <model.TrainRide>[],
     error: (error, stack) => throw error,
