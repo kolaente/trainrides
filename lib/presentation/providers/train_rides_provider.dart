@@ -22,31 +22,21 @@ class TrainRidesNotifier extends _$TrainRidesNotifier {
   }
 
   Future<void> addTrainRide(model.TrainRide ride) async {
-    state = const AsyncValue.loading();
-
     try {
       final api = ref.read(baserowApiProvider);
       await api.createTrainRide(ride);
-
-      // Refresh the list after adding
-      final updatedRides = await api.getTrainRides(orderBy: '-field_13814');
-      state = AsyncValue.data(updatedRides);
+      ref.invalidateSelf();
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
   }
 
   Future<void> updateTrainRide(model.TrainRide ride) async {
-    state = const AsyncValue.loading();
-
     try {
       final api = ref.read(baserowApiProvider);
       await api.updateTrainRide(ride);
-
-      // Refresh the list after updating
-      final updatedRides = await api.getTrainRides(orderBy: '-field_13814');
-      state = AsyncValue.data(updatedRides);
-
+      ref.invalidateSelf();
+      
       // Invalidate the individual ride cache
       if (ride.id != null) {
         ref.invalidate(trainRideByIdProvider(ride.id!));
@@ -57,16 +47,11 @@ class TrainRidesNotifier extends _$TrainRidesNotifier {
   }
 
   Future<void> deleteTrainRide(int id) async {
-    state = const AsyncValue.loading();
-
     try {
       final api = ref.read(baserowApiProvider);
       await api.deleteTrainRide(id);
-
-      // Refresh the list after deleting
-      final updatedRides = await api.getTrainRides(orderBy: '-field_13814');
-      state = AsyncValue.data(updatedRides);
-
+      ref.invalidateSelf();
+      
       // Invalidate the individual ride cache
       ref.invalidate(trainRideByIdProvider(id));
     } catch (error, stackTrace) {
