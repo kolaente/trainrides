@@ -58,3 +58,4 @@ devenv.local.nix
 
 # ai
 /instructions/*.md
+PLAN.md
