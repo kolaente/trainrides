@@ -77,11 +77,14 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
 
     try {
       final now = DateTime.now();
+      final priceText = _priceController.text.trim();
+      final parsedPrice = double.parse(priceText);
+      
       final ride = model.TrainRide(
         id: widget.ride?.id,
         from: _fromController.text.trim(),
         to: _toController.text.trim(),
-        price: double.parse(_priceController.text.trim()),
+        price: parsedPrice,
         type: _selectedType!,
         date: _selectedDate,
         details: _detailsController.text.trim().isEmpty ? null : _detailsController.text.trim(),

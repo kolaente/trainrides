@@ -46,6 +46,11 @@ class TrainRidesNotifier extends _$TrainRidesNotifier {
       // Refresh the list after updating
       final updatedRides = await api.getTrainRides(orderBy: '-field_13814');
       state = AsyncValue.data(updatedRides);
+      
+      // Invalidate the individual ride cache
+      if (ride.id != null) {
+        ref.invalidate(trainRideByIdProvider(ride.id!));
+      }
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
@@ -61,6 +66,9 @@ class TrainRidesNotifier extends _$TrainRidesNotifier {
       // Refresh the list after deleting
       final updatedRides = await api.getTrainRides(orderBy: '-field_13814');
       state = AsyncValue.data(updatedRides);
+      
+      // Invalidate the individual ride cache
+      ref.invalidate(trainRideByIdProvider(id));
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }

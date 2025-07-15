@@ -73,7 +73,8 @@ class BaserowApi {
 
       if (jsonData['results'] != null) {
         final List<dynamic> results = jsonData['results'];
-        return results.map((json) => TrainRide.fromBaserowJson(json)).toList();
+        final trainRides = results.map((json) => TrainRide.fromBaserowJson(json)).toList();
+        return trainRides;
       }
 
       return [];
@@ -106,14 +107,17 @@ class BaserowApi {
 
   Future<TrainRide> createTrainRide(TrainRide trainRide) async {
     try {
-      final body = json.encode(trainRide.toBaserowJson());
+      final requestData = trainRide.toBaserowJson();
+      final body = json.encode(requestData);
+      
       final response = await _httpClient.post(
         ApiConstants.baseApiUrl,
         body: body,
       );
 
       final jsonData = json.decode(response.body);
-      return TrainRide.fromBaserowJson(jsonData);
+      final result = TrainRide.fromBaserowJson(jsonData);
+      return result;
     } on SocketException {
       throw const NetworkException('No internet connection');
     } on FormatException {
@@ -130,12 +134,22 @@ class BaserowApi {
     }
 
     try {
-      final body = json.encode(trainRide.toBaserowJson());
-      final url = '${ApiConstants.baseApiUrl}${trainRide.id}/';
-      final response = await _httpClient.put(url, body: body);
+      final requestData = {
+        'from': trainRide.from,
+        'to': trainRide.to,
+        'price': trainRide.price.toString(),
+        'type': trainRide.type,
+        'date': trainRide.date.toIso8601String().split('T').first,
+        if (trainRide.details != null) 'details': trainRide.details,
+      };
+      final body = json.encode(requestData);
+      final url = '${ApiConstants.baseApiUrl}${trainRide.id}/?user_field_names=true';
+      
+      final response = await _httpClient.patch(url, body: body);
 
       final jsonData = json.decode(response.body);
-      return TrainRide.fromBaserowJson(jsonData);
+      final result = TrainRide.fromBaserowUserFieldJson(jsonData);
+      return result;
     } on SocketException {
       throw const NetworkException('No internet connection');
     } on FormatException {
@@ -222,7 +236,7 @@ class BaserowApi {
           await updateTrainRide(ride);
         }
       } catch (e) {
-        print('Failed to sync ride ${ride.id}: $e');
+        // Silently handle sync errors for individual rides
       }
     }
   }

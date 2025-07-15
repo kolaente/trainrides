@@ -151,7 +151,6 @@ class AuthNotifier extends _$AuthNotifier {
       await BaserowApi().loadFields();
     } catch (e) {
       // Don't fail authentication if field loading fails
-      print('Failed to load fields: $e');
     }
   }
 }
