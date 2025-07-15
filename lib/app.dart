@@ -15,15 +15,11 @@ class TrainRidesApp extends ConsumerWidget {
 
     return themeAsync.when(
       loading: () => const MaterialApp(
-        home: Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        ),
+        home: Scaffold(body: Center(child: CircularProgressIndicator())),
       ),
       error: (error, stack) => MaterialApp(
         home: Scaffold(
-          body: Center(
-            child: Text('Error initializing app: $error'),
-          ),
+          body: Center(child: Text('Error initializing app: $error')),
         ),
       ),
       data: (themeMode) => MaterialApp(
@@ -32,9 +28,8 @@ class TrainRidesApp extends ConsumerWidget {
         darkTheme: theme_provider.AppTheme.darkTheme,
         themeMode: _getThemeMode(themeMode),
         home: authAsync.when(
-          loading: () => const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          ),
+          loading: () =>
+              const Scaffold(body: Center(child: CircularProgressIndicator())),
           error: (error, stack) => Scaffold(
             body: Center(
               child: Column(

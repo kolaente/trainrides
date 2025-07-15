@@ -22,19 +22,18 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
   void _handleSubmit() {
     if (_formKey.currentState?.validate() ?? false) {
-      ref.read(authNotifierProvider.notifier).authenticate(_tokenController.text.trim());
+      ref
+          .read(authNotifierProvider.notifier)
+          .authenticate(_tokenController.text.trim());
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authNotifierProvider);
-    
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Authentication'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Authentication'), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -43,27 +42,17 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Icon(
-                Icons.train,
-                size: 80,
-                color: Colors.blue,
-              ),
+              const Icon(Icons.train, size: 80, color: Colors.blue),
               const SizedBox(height: 32),
               const Text(
                 'Train Rides',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
               const Text(
                 'Enter your Baserow API token to continue',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
+                style: TextStyle(fontSize: 16, color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 32),
@@ -134,7 +123,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                       ],
                     );
                   }
-                  
+
                   return ElevatedButton(
                     onPressed: _handleSubmit,
                     style: ElevatedButton.styleFrom(
@@ -211,15 +200,14 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                       const SizedBox(height: 8),
                       const Text('1. Go to your Baserow account settings'),
                       const Text('2. Navigate to the "API tokens" section'),
-                      const Text('3. Create a new token with read/write permissions'),
+                      const Text(
+                        '3. Create a new token with read/write permissions',
+                      ),
                       const Text('4. Copy the token and paste it above'),
                       const SizedBox(height: 12),
                       const Text(
                         'Note: Your token will be stored securely on this device.',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
                       ),
                     ],
                   ),

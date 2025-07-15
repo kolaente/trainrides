@@ -17,23 +17,28 @@ class BaserowApi {
 
   Future<void> loadFields() async {
     try {
-      final url = '${ApiConstants.baseUrl}/api/database/fields/table/${ApiConstants.tableId}/';
+      final url =
+          '${ApiConstants.baseUrl}/api/database/fields/table/${ApiConstants.tableId}/';
       final response = await _httpClient.get(url);
-      
+
       if (response.statusCode == 401) {
-        throw const AuthException('Authentication failed - Invalid or expired token');
+        throw const AuthException(
+          'Authentication failed - Invalid or expired token',
+        );
       }
-      
+
       final jsonData = json.decode(response.body);
-      
+
       if (jsonData is List) {
         final typeField = jsonData.firstWhere(
           (field) => field['name'] == 'type',
           orElse: () => null,
         );
-        
+
         if (typeField != null && typeField['select_options'] != null) {
-          _typeOptions = List<Map<String, dynamic>>.from(typeField['select_options']);
+          _typeOptions = List<Map<String, dynamic>>.from(
+            typeField['select_options'],
+          );
         }
       }
     } on SocketException {
@@ -57,23 +62,28 @@ class BaserowApi {
       if (page != null) queryParams['page'] = page.toString();
       if (size != null) queryParams['size'] = size.toString();
       if (search != null && search.isNotEmpty) queryParams['search'] = search;
-      if (orderBy != null && orderBy.isNotEmpty) queryParams['order_by'] = orderBy;
+      if (orderBy != null && orderBy.isNotEmpty)
+        queryParams['order_by'] = orderBy;
 
-      final uri = Uri.parse(ApiConstants.baseApiUrl).replace(
-        queryParameters: queryParams.isNotEmpty ? queryParams : null,
-      );
+      final uri = Uri.parse(
+        ApiConstants.baseApiUrl,
+      ).replace(queryParameters: queryParams.isNotEmpty ? queryParams : null);
 
       final response = await _httpClient.get(uri.toString());
-      
+
       if (response.statusCode == 401) {
-        throw const AuthException('Authentication failed - Invalid or expired token');
+        throw const AuthException(
+          'Authentication failed - Invalid or expired token',
+        );
       }
-      
+
       final jsonData = json.decode(response.body);
 
       if (jsonData['results'] != null) {
         final List<dynamic> results = jsonData['results'];
-        final trainRides = results.map((json) => TrainRide.fromBaserowJson(json)).toList();
+        final trainRides = results
+            .map((json) => TrainRide.fromBaserowJson(json))
+            .toList();
         return trainRides;
       }
 
@@ -109,7 +119,7 @@ class BaserowApi {
     try {
       final requestData = trainRide.toBaserowJson();
       final body = json.encode(requestData);
-      
+
       final response = await _httpClient.post(
         ApiConstants.baseApiUrl,
         body: body,
@@ -143,8 +153,9 @@ class BaserowApi {
         if (trainRide.details != null) 'details': trainRide.details,
       };
       final body = json.encode(requestData);
-      final url = '${ApiConstants.baseApiUrl}${trainRide.id}/?user_field_names=true';
-      
+      final url =
+          '${ApiConstants.baseApiUrl}${trainRide.id}/?user_field_names=true';
+
       final response = await _httpClient.patch(url, body: body);
 
       final jsonData = json.decode(response.body);
@@ -195,9 +206,9 @@ class BaserowApi {
         queryParams['filter__updated_on__gte'] = lastSyncTime.toIso8601String();
       }
 
-      final uri = Uri.parse(ApiConstants.baseApiUrl).replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        ApiConstants.baseApiUrl,
+      ).replace(queryParameters: queryParams);
 
       final response = await _httpClient.get(uri.toString());
       final jsonData = json.decode(response.body);

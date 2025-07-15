@@ -22,7 +22,7 @@ class HttpClient {
 
   Future<String?> getAuthToken() async {
     if (_authToken != null) return _authToken;
-    
+
     final prefs = await SharedPreferences.getInstance();
     _authToken = prefs.getString('auth_token');
     return _authToken;
@@ -52,11 +52,10 @@ class HttpClient {
   Future<http.Response> get(String url) async {
     try {
       final headers = await _headers;
-      final response = await client.get(
-        Uri.parse(url),
-        headers: headers,
-      ).timeout(ApiConstants.requestTimeout);
-      
+      final response = await client
+          .get(Uri.parse(url), headers: headers)
+          .timeout(ApiConstants.requestTimeout);
+
       return _handleResponse(response);
     } on SocketException {
       throw const NetworkException('No internet connection');
@@ -70,12 +69,10 @@ class HttpClient {
   Future<http.Response> post(String url, {required String body}) async {
     try {
       final headers = await _headers;
-      final response = await client.post(
-        Uri.parse(url),
-        headers: headers,
-        body: body,
-      ).timeout(ApiConstants.requestTimeout);
-      
+      final response = await client
+          .post(Uri.parse(url), headers: headers, body: body)
+          .timeout(ApiConstants.requestTimeout);
+
       return _handleResponse(response);
     } on SocketException {
       throw const NetworkException('No internet connection');
@@ -89,12 +86,10 @@ class HttpClient {
   Future<http.Response> put(String url, {required String body}) async {
     try {
       final headers = await _headers;
-      final response = await client.put(
-        Uri.parse(url),
-        headers: headers,
-        body: body,
-      ).timeout(ApiConstants.requestTimeout);
-      
+      final response = await client
+          .put(Uri.parse(url), headers: headers, body: body)
+          .timeout(ApiConstants.requestTimeout);
+
       return _handleResponse(response);
     } on SocketException {
       throw const NetworkException('No internet connection');
@@ -108,12 +103,10 @@ class HttpClient {
   Future<http.Response> patch(String url, {required String body}) async {
     try {
       final headers = await _headers;
-      final response = await client.patch(
-        Uri.parse(url),
-        headers: headers,
-        body: body,
-      ).timeout(ApiConstants.requestTimeout);
-      
+      final response = await client
+          .patch(Uri.parse(url), headers: headers, body: body)
+          .timeout(ApiConstants.requestTimeout);
+
       return _handleResponse(response);
     } on SocketException {
       throw const NetworkException('No internet connection');
@@ -127,11 +120,10 @@ class HttpClient {
   Future<http.Response> delete(String url) async {
     try {
       final headers = await _headers;
-      final response = await client.delete(
-        Uri.parse(url),
-        headers: headers,
-      ).timeout(ApiConstants.requestTimeout);
-      
+      final response = await client
+          .delete(Uri.parse(url), headers: headers)
+          .timeout(ApiConstants.requestTimeout);
+
       return _handleResponse(response);
     } on SocketException {
       throw const NetworkException('No internet connection');
@@ -146,7 +138,7 @@ class HttpClient {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       return response;
     }
-    
+
     switch (response.statusCode) {
       case 401:
         throw const AuthException('Unauthorized - Invalid token');

@@ -20,7 +20,7 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
   final _toController = TextEditingController();
   final _priceController = TextEditingController();
   final _detailsController = TextEditingController();
-  
+
   DateTime _selectedDate = DateTime.now();
   String? _selectedType;
   bool _isLoading = false;
@@ -79,7 +79,7 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
       final now = DateTime.now();
       final priceText = _priceController.text.trim();
       final parsedPrice = double.parse(priceText);
-      
+
       final ride = model.TrainRide(
         id: widget.ride?.id,
         from: _fromController.text.trim(),
@@ -87,7 +87,9 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
         price: parsedPrice,
         type: _selectedType!,
         date: _selectedDate,
-        details: _detailsController.text.trim().isEmpty ? null : _detailsController.text.trim(),
+        details: _detailsController.text.trim().isEmpty
+            ? null
+            : _detailsController.text.trim(),
         createdAt: widget.ride?.createdAt ?? now,
         updatedAt: now,
       );
@@ -95,14 +97,18 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
       if (widget.ride == null) {
         await ref.read(trainRidesNotifierProvider.notifier).addTrainRide(ride);
       } else {
-        await ref.read(trainRidesNotifierProvider.notifier).updateTrainRide(ride);
+        await ref
+            .read(trainRidesNotifierProvider.notifier)
+            .updateTrainRide(ride);
       }
 
       if (mounted) {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(widget.ride == null ? 'Train ride added' : 'Train ride updated'),
+            content: Text(
+              widget.ride == null ? 'Train ride added' : 'Train ride updated',
+            ),
             backgroundColor: Colors.green,
           ),
         );
@@ -239,7 +245,9 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
                 prefixIcon: Icon(Icons.euro),
                 suffixText: 'EUR',
               ),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
                   return 'Please enter price';
@@ -280,7 +288,11 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
                         Text('Saving...'),
                       ],
                     )
-                  : Text(widget.ride == null ? 'Add Train Ride' : 'Update Train Ride'),
+                  : Text(
+                      widget.ride == null
+                          ? 'Add Train Ride'
+                          : 'Update Train Ride',
+                    ),
             ),
           ],
         ),

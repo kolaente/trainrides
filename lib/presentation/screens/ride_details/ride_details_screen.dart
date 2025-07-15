@@ -14,9 +14,8 @@ class RideDetailsScreen extends ConsumerWidget {
     final rideAsync = ref.watch(trainRideByIdProvider(rideId));
 
     return rideAsync.when(
-      loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      ),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (error, stack) => Scaffold(
         appBar: AppBar(title: const Text('Error')),
         body: Center(
@@ -93,9 +92,8 @@ class RideDetailsScreen extends ConsumerWidget {
                       const SizedBox(height: 16),
                       Text(
                         ride.displayTitle,
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 8),
@@ -137,7 +135,9 @@ class RideDetailsScreen extends ConsumerWidget {
                           _DetailRow(
                             icon: Icons.calendar_today,
                             label: 'Date',
-                            value: date_utils.DateUtils.formatForDisplay(ride.date),
+                            value: date_utils.DateUtils.formatForDisplay(
+                              ride.date,
+                            ),
                           ),
                         ],
                       ),
@@ -158,12 +158,18 @@ class RideDetailsScreen extends ConsumerWidget {
                           _DetailRow(
                             icon: Icons.access_time,
                             label: 'Created',
-                            value: date_utils.DateUtils.formatDateTimeForDisplay(ride.createdAt),
+                            value:
+                                date_utils.DateUtils.formatDateTimeForDisplay(
+                                  ride.createdAt,
+                                ),
                           ),
                           _DetailRow(
                             icon: Icons.update,
                             label: 'Updated',
-                            value: date_utils.DateUtils.formatDateTimeForDisplay(ride.updatedAt),
+                            value:
+                                date_utils.DateUtils.formatDateTimeForDisplay(
+                                  ride.updatedAt,
+                                ),
                           ),
                         ],
                       ),
@@ -178,12 +184,18 @@ class RideDetailsScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _showDeleteDialog(BuildContext context, WidgetRef ref, int rideId) async {
+  Future<void> _showDeleteDialog(
+    BuildContext context,
+    WidgetRef ref,
+    int rideId,
+  ) async {
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Train Ride'),
-        content: const Text('Are you sure you want to delete this train ride? This action cannot be undone.'),
+        content: const Text(
+          'Are you sure you want to delete this train ride? This action cannot be undone.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -200,7 +212,9 @@ class RideDetailsScreen extends ConsumerWidget {
 
     if (result == true) {
       try {
-        await ref.read(trainRidesNotifierProvider.notifier).deleteTrainRide(rideId);
+        await ref
+            .read(trainRidesNotifierProvider.notifier)
+            .deleteTrainRide(rideId);
         if (context.mounted) {
           Navigator.of(context).pop();
           ScaffoldMessenger.of(context).showSnackBar(
@@ -228,10 +242,7 @@ class _DetailCard extends StatelessWidget {
   final String title;
   final List<Widget> children;
 
-  const _DetailCard({
-    required this.title,
-    required this.children,
-  });
+  const _DetailCard({required this.title, required this.children});
 
   @override
   Widget build(BuildContext context) {
@@ -244,9 +255,9 @@ class _DetailCard extends StatelessWidget {
           children: [
             Text(
               title,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             ...children,
@@ -274,11 +285,7 @@ class _DetailRow extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
-          Icon(
-            icon,
-            size: 20,
-            color: Theme.of(context).colorScheme.primary,
-          ),
+          Icon(icon, size: 20, color: Theme.of(context).colorScheme.primary),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -287,15 +294,17 @@ class _DetailRow extends StatelessWidget {
                 Text(
                   label,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
-                      ),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.7),
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   value,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w500,
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
                 ),
               ],
             ),

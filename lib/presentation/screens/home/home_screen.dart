@@ -125,7 +125,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => RideDetailsScreen(rideId: ride.id!),
+                        builder: (context) =>
+                            RideDetailsScreen(rideId: ride.id!),
                       ),
                     );
                   },
@@ -138,9 +139,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const AddRideScreen(),
-            ),
+            MaterialPageRoute(builder: (context) => const AddRideScreen()),
           );
         },
         tooltip: 'Add Train Ride',
@@ -150,10 +149,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Future<void> _showThemeDialog(BuildContext context) async {
-    final currentTheme = await ref.read(theme_provider.themeNotifierProvider.future);
-    
+    final currentTheme = await ref.read(
+      theme_provider.themeNotifierProvider.future,
+    );
+
     if (!mounted) return;
-    
+
     await showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
@@ -161,17 +162,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: theme_provider.ThemeMode.values
-              .map((mode) => RadioListTile<theme_provider.ThemeMode>(
-                    title: Text(mode.displayName),
-                    value: mode,
-                    groupValue: currentTheme,
-                    onChanged: (value) {
-                      if (value != null) {
-                        ref.read(theme_provider.themeNotifierProvider.notifier).setTheme(value);
-                        Navigator.of(context).pop();
-                      }
-                    },
-                  ))
+              .map(
+                (mode) => RadioListTile<theme_provider.ThemeMode>(
+                  title: Text(mode.displayName),
+                  value: mode,
+                  groupValue: currentTheme,
+                  onChanged: (value) {
+                    if (value != null) {
+                      ref
+                          .read(theme_provider.themeNotifierProvider.notifier)
+                          .setTheme(value);
+                      Navigator.of(context).pop();
+                    }
+                  },
+                ),
+              )
               .toList(),
         ),
       ),
@@ -183,11 +188,7 @@ class TrainRideListItem extends StatelessWidget {
   final model.TrainRide ride;
   final VoidCallback onTap;
 
-  const TrainRideListItem({
-    super.key,
-    required this.ride,
-    required this.onTap,
-  });
+  const TrainRideListItem({super.key, required this.ride, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -225,10 +226,7 @@ class TrainRideListItem extends StatelessWidget {
           children: [
             Text(
               ride.displayPrice,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
           ],
         ),

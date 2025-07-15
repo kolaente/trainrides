@@ -7,49 +7,36 @@ import '../../data/datasources/remote/baserow_api.dart';
 
 part 'auth_provider.g.dart';
 
-enum AuthStatus {
-  unauthenticated,
-  authenticated,
-  loading,
-  error,
-}
+enum AuthStatus { unauthenticated, authenticated, loading, error }
 
 class AuthState {
   final AuthStatus status;
   final String? token;
   final String? error;
 
-  const AuthState({
-    required this.status,
-    this.token,
-    this.error,
-  });
+  const AuthState({required this.status, this.token, this.error});
 
   const AuthState.unauthenticated()
-      : status = AuthStatus.unauthenticated,
-        token = null,
-        error = null;
+    : status = AuthStatus.unauthenticated,
+      token = null,
+      error = null;
 
   const AuthState.authenticated(String token)
-      : status = AuthStatus.authenticated,
-        token = token,
-        error = null;
+    : status = AuthStatus.authenticated,
+      token = token,
+      error = null;
 
   const AuthState.loading()
-      : status = AuthStatus.loading,
-        token = null,
-        error = null;
+    : status = AuthStatus.loading,
+      token = null,
+      error = null;
 
   const AuthState.error(String error)
-      : status = AuthStatus.error,
-        token = null,
-        error = error;
+    : status = AuthStatus.error,
+      token = null,
+      error = error;
 
-  AuthState copyWith({
-    AuthStatus? status,
-    String? token,
-    String? error,
-  }) {
+  AuthState copyWith({AuthStatus? status, String? token, String? error}) {
     return AuthState(
       status: status ?? this.status,
       token: token ?? this.token,
@@ -57,7 +44,8 @@ class AuthState {
     );
   }
 
-  bool get isAuthenticated => status == AuthStatus.authenticated && token != null;
+  bool get isAuthenticated =>
+      status == AuthStatus.authenticated && token != null;
   bool get isLoading => status == AuthStatus.loading;
   bool get hasError => status == AuthStatus.error;
 }
@@ -69,7 +57,7 @@ class AuthNotifier extends _$AuthNotifier {
     final token = await _getStoredToken();
     if (token != null) {
       await HttpClient().setAuthToken(token);
-      
+
       final isValid = await _validateToken(token);
       if (isValid) {
         await _loadFields();
@@ -84,7 +72,7 @@ class AuthNotifier extends _$AuthNotifier {
 
   Future<void> authenticate(String token) async {
     state = const AsyncValue.loading();
-    
+
     try {
       if (token.trim().isEmpty) {
         throw const ValidationException('Token cannot be empty');
@@ -98,7 +86,7 @@ class AuthNotifier extends _$AuthNotifier {
       await HttpClient().setAuthToken(token);
       await _storeToken(token);
       await _loadFields();
-      
+
       state = AsyncValue.data(AuthState.authenticated(token));
     } catch (e) {
       String errorMessage = 'Authentication failed';
@@ -119,7 +107,7 @@ class AuthNotifier extends _$AuthNotifier {
     try {
       final client = HttpClient();
       await client.setAuthToken(token);
-      
+
       final response = await client.get(ApiConstants.baseApiUrl);
       return response.statusCode == 200;
     } catch (e) {
