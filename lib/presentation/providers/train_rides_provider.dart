@@ -68,8 +68,13 @@ class TrainRideSearchNotifier extends _$TrainRideSearchNotifier {
       return [];
     }
 
-    final api = ref.read(baserowApiProvider);
-    final allRides = await api.getTrainRides(orderBy: '-field_13814');
+    // Use shared cache from main provider
+    final allRidesAsync = ref.watch(trainRidesNotifierProvider);
+    final allRides = await allRidesAsync.when(
+      data: (rides) => rides,
+      loading: () => <model.TrainRide>[],
+      error: (error, stack) => throw error,
+    );
 
     // Simple search in from, to, and details fields
     return allRides.where((ride) {
@@ -89,8 +94,13 @@ class TrainRideSearchNotifier extends _$TrainRideSearchNotifier {
     state = const AsyncValue.loading();
 
     try {
-      final api = ref.read(baserowApiProvider);
-      final allRides = await api.getTrainRides(orderBy: '-field_13814');
+      // Use shared cache from main provider
+      final allRidesAsync = ref.read(trainRidesNotifierProvider);
+      final allRides = await allRidesAsync.when(
+        data: (rides) => rides,
+        loading: () => <model.TrainRide>[],
+        error: (error, stack) => throw error,
+      );
 
       final results = allRides.where((ride) {
         final searchText = query.toLowerCase();
@@ -112,8 +122,13 @@ Future<List<model.TrainRide>> trainRidesByDateRange(
   DateTime start,
   DateTime end,
 ) async {
-  final api = ref.read(baserowApiProvider);
-  final allRides = await api.getTrainRides(orderBy: '-field_13814');
+  // Use shared cache from main provider
+  final allRidesAsync = ref.watch(trainRidesNotifierProvider);
+  final allRides = await allRidesAsync.when(
+    data: (rides) => rides,
+    loading: () => <model.TrainRide>[],
+    error: (error, stack) => throw error,
+  );
 
   return allRides.where((ride) {
     return ride.date.isAfter(start.subtract(const Duration(days: 1))) &&
