@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/train_rides_provider.dart';
 import '../../../data/models/train_ride.dart' as model;
 import '../../../core/utils/date_utils.dart' as date_utils;
+import '../../../data/datasources/remote/baserow_api.dart';
 
 class AddRideScreen extends ConsumerStatefulWidget {
   final model.TrainRide? ride;
@@ -21,12 +22,10 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
   final _detailsController = TextEditingController();
   
   DateTime _selectedDate = DateTime.now();
-  String _selectedType = 'ICE';
+  String? _selectedType;
   bool _isLoading = false;
 
-  final List<String> _trainTypes = [
-    'ICE', 'IC', 'RE', 'RB', 'S-Bahn', 'Tram', 'Bus', 'Other'
-  ];
+  List<Map<String, dynamic>> get _typeOptions => BaserowApi().typeOptions;
 
   @override
   void initState() {
@@ -38,6 +37,11 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
       _detailsController.text = widget.ride!.details ?? '';
       _selectedDate = widget.ride!.date;
       _selectedType = widget.ride!.type;
+    } else {
+      // Set default to first option if available
+      if (_typeOptions.isNotEmpty) {
+        _selectedType = _typeOptions.first['value'];
+      }
     }
   }
 
@@ -78,7 +82,7 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
         from: _fromController.text.trim(),
         to: _toController.text.trim(),
         price: double.parse(_priceController.text.trim()),
-        type: _selectedType,
+        type: _selectedType!,
         date: _selectedDate,
         details: _detailsController.text.trim().isEmpty ? null : _detailsController.text.trim(),
         createdAt: widget.ride?.createdAt ?? now,
@@ -196,10 +200,10 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
                       labelText: 'Type',
                       prefixIcon: Icon(Icons.train),
                     ),
-                    items: _trainTypes.map((type) {
-                      return DropdownMenuItem(
-                        value: type,
-                        child: Text(type),
+                    items: _typeOptions.map<DropdownMenuItem<String>>((option) {
+                      return DropdownMenuItem<String>(
+                        value: option['value'] as String,
+                        child: Text(option['value'] as String),
                       );
                     }).toList(),
                     onChanged: (value) {
@@ -208,6 +212,12 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
                           _selectedType = value;
                         });
                       }
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please select a type';
+                      }
+                      return null;
                     },
                   ),
                 ),

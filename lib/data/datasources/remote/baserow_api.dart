@@ -11,6 +11,40 @@ class BaserowApi {
   BaserowApi._internal();
 
   final HttpClient _httpClient = HttpClient();
+  List<Map<String, dynamic>> _typeOptions = [];
+
+  List<Map<String, dynamic>> get typeOptions => _typeOptions;
+
+  Future<void> loadFields() async {
+    try {
+      final url = '${ApiConstants.baseUrl}/api/database/fields/table/${ApiConstants.tableId}/';
+      final response = await _httpClient.get(url);
+      
+      if (response.statusCode == 401) {
+        throw const AuthException('Authentication failed - Invalid or expired token');
+      }
+      
+      final jsonData = json.decode(response.body);
+      
+      if (jsonData is List) {
+        final typeField = jsonData.firstWhere(
+          (field) => field['name'] == 'type',
+          orElse: () => null,
+        );
+        
+        if (typeField != null && typeField['select_options'] != null) {
+          _typeOptions = List<Map<String, dynamic>>.from(typeField['select_options']);
+        }
+      }
+    } on SocketException {
+      throw const NetworkException('No internet connection');
+    } on FormatException {
+      throw const ApiException('Invalid response format');
+    } catch (e) {
+      if (e is AppException) rethrow;
+      throw ApiException('Failed to load fields: ${e.toString()}');
+    }
+  }
 
   Future<List<TrainRide>> getTrainRides({
     int? page,

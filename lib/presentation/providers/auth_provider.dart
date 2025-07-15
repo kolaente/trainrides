@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/constants/api_constants.dart';
 import '../../core/errors/exceptions.dart';
+import '../../data/datasources/remote/baserow_api.dart';
 
 part 'auth_provider.g.dart';
 
@@ -71,6 +72,7 @@ class AuthNotifier extends _$AuthNotifier {
       
       final isValid = await _validateToken(token);
       if (isValid) {
+        await _loadFields();
         return AuthState.authenticated(token);
       } else {
         await _clearStoredToken();
@@ -95,6 +97,7 @@ class AuthNotifier extends _$AuthNotifier {
 
       await HttpClient().setAuthToken(token);
       await _storeToken(token);
+      await _loadFields();
       
       state = AsyncValue.data(AuthState.authenticated(token));
     } catch (e) {
@@ -141,5 +144,14 @@ class AuthNotifier extends _$AuthNotifier {
   Future<void> _clearStoredToken() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('auth_token');
+  }
+
+  Future<void> _loadFields() async {
+    try {
+      await BaserowApi().loadFields();
+    } catch (e) {
+      // Don't fail authentication if field loading fails
+      print('Failed to load fields: $e');
+    }
   }
 }

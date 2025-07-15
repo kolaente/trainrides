@@ -1,0 +1,145 @@
+[
+  {
+    "id": 13808,
+    "table_id": 1438,
+    "name": "from",
+    "order": 0,
+    "type": "text",
+    "primary": true,
+    "read_only": false,
+    "immutable_type": false,
+    "immutable_properties": false,
+    "description": "",
+    "database_id": 307,
+    "workspace_id": 116,
+    "db_index": false,
+    "field_constraints": [],
+    "text_default": ""
+  },
+  {
+    "id": 13811,
+    "table_id": 1438,
+    "name": "to",
+    "order": 1,
+    "type": "text",
+    "primary": false,
+    "read_only": false,
+    "immutable_type": false,
+    "immutable_properties": false,
+    "description": null,
+    "database_id": 307,
+    "workspace_id": 116,
+    "db_index": false,
+    "field_constraints": [],
+    "text_default": ""
+  },
+  {
+    "id": 13812,
+    "table_id": 1438,
+    "name": "price",
+    "order": 2,
+    "type": "number",
+    "primary": false,
+    "read_only": false,
+    "immutable_type": false,
+    "immutable_properties": false,
+    "description": null,
+    "database_id": 307,
+    "workspace_id": 116,
+    "db_index": false,
+    "field_constraints": [],
+    "number_decimal_places": 2,
+    "number_negative": false,
+    "number_prefix": "",
+    "number_suffix": "€",
+    "number_separator": "PERIOD_COMMA",
+    "number_default": null
+  },
+  {
+    "id": 13813,
+    "table_id": 1438,
+    "name": "type",
+    "order": 3,
+    "type": "single_select",
+    "primary": false,
+    "read_only": false,
+    "immutable_type": false,
+    "immutable_properties": false,
+    "description": null,
+    "database_id": 307,
+    "workspace_id": 116,
+    "db_index": false,
+    "field_constraints": [],
+    "select_options": [
+      {
+        "id": 6695,
+        "value": "DPSG Bund",
+        "color": "dark-blue"
+      },
+      {
+        "id": 6696,
+        "value": "DPSG Sonstiges",
+        "color": "light-pink"
+      },
+      {
+        "id": 6697,
+        "value": "Spaß",
+        "color": "darker-gray"
+      },
+      {
+        "id": 6698,
+        "value": "Hannah besuchen",
+        "color": "light-yellow"
+      },
+      {
+        "id": 6699,
+        "value": "WSJ",
+        "color": "darker-purple"
+      },
+      {
+        "id": 6700,
+        "value": "Ironscout 26 Orga",
+        "color": "light-blue"
+      }
+    ],
+    "single_select_default": null
+  },
+  {
+    "id": 13814,
+    "table_id": 1438,
+    "name": "date",
+    "order": 4,
+    "type": "date",
+    "primary": false,
+    "read_only": false,
+    "immutable_type": false,
+    "immutable_properties": false,
+    "description": null,
+    "database_id": 307,
+    "workspace_id": 116,
+    "db_index": false,
+    "field_constraints": [],
+    "date_format": "EU",
+    "date_include_time": false,
+    "date_time_format": "24",
+    "date_show_tzinfo": false,
+    "date_force_timezone": null
+  },
+  {
+    "id": 13815,
+    "table_id": 1438,
+    "name": "details",
+    "order": 5,
+    "type": "text",
+    "primary": false,
+    "read_only": false,
+    "immutable_type": false,
+    "immutable_properties": false,
+    "description": null,
+    "database_id": 307,
+    "workspace_id": 116,
+    "db_index": false,
+    "field_constraints": [],
+    "text_default": ""
+  }
+]
