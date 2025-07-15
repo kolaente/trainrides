@@ -197,7 +197,7 @@ class TrainRideListItem extends StatelessWidget {
         leading: CircleAvatar(
           backgroundColor: Theme.of(context).colorScheme.primary,
           child: Text(
-            ride.type.substring(0, 1).toUpperCase(),
+            ride.type.isEmpty ? '?' : ride.type.substring(0, 1).toUpperCase(),
             style: TextStyle(
               color: Theme.of(context).colorScheme.onPrimary,
               fontWeight: FontWeight.bold,
