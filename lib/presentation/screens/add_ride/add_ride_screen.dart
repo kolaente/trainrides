@@ -196,6 +196,7 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
                 Expanded(
                   child: DropdownButtonFormField<String>(
                     value: _selectedType,
+                    isExpanded: true,
                     decoration: const InputDecoration(
                       labelText: 'Type',
                       prefixIcon: Icon(Icons.train),
@@ -203,7 +204,10 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
                     items: _typeOptions.map<DropdownMenuItem<String>>((option) {
                       return DropdownMenuItem<String>(
                         value: option['value'] as String,
-                        child: Text(option['value'] as String),
+                        child: Text(
+                          option['value'] as String,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       );
                     }).toList(),
                     onChanged: (value) {
