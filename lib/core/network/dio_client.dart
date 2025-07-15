@@ -105,6 +105,25 @@ class HttpClient {
     }
   }
 
+  Future<http.Response> patch(String url, {required String body}) async {
+    try {
+      final headers = await _headers;
+      final response = await client.patch(
+        Uri.parse(url),
+        headers: headers,
+        body: body,
+      ).timeout(ApiConstants.requestTimeout);
+      
+      return _handleResponse(response);
+    } on SocketException {
+      throw const NetworkException('No internet connection');
+    } on HttpException {
+      throw const NetworkException('Network error occurred');
+    } catch (e) {
+      throw NetworkException('Request failed: ${e.toString()}');
+    }
+  }
+
   Future<http.Response> delete(String url) async {
     try {
       final headers = await _headers;
