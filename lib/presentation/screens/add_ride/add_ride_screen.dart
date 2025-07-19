@@ -269,31 +269,6 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
               ),
               maxLines: 3,
             ),
-            const SizedBox(height: 32),
-            ElevatedButton(
-              onPressed: _isLoading ? null : _saveRide,
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 48),
-              ),
-              child: _isLoading
-                  ? const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                        SizedBox(width: 12),
-                        Text('Saving...'),
-                      ],
-                    )
-                  : Text(
-                      widget.ride == null
-                          ? 'Add Train Ride'
-                          : 'Update Train Ride',
-                    ),
-            ),
           ],
         ),
       ),
