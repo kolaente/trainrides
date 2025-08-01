@@ -36,7 +36,7 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
       _priceController.text = widget.ride!.price.toStringAsFixed(2);
       _detailsController.text = widget.ride!.details ?? '';
       _selectedDate = widget.ride!.date;
-      _selectedType = null;
+      // Will be set when types load
     }
   }
 
@@ -75,12 +75,29 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
       final priceText = _priceController.text.trim();
       final parsedPrice = double.parse(priceText);
 
+      // Convert selected type title to type ID
+      int? typeId;
+      if (_selectedType != null) {
+        final rideTypesAsync = ref.read(rideTypesNotifierProvider);
+        typeId = rideTypesAsync.when(
+          data: (types) {
+            final matchingType = types.firstWhere(
+              (type) => type['title'] == _selectedType,
+              orElse: () => <String, dynamic>{},
+            );
+            return matchingType['id'] as int?;
+          },
+          loading: () => null,
+          error: (_, __) => null,
+        );
+      }
+
       final ride = model.TrainRide(
         id: widget.ride?.id,
         from: _fromController.text.trim(),
         to: _toController.text.trim(),
         price: parsedPrice,
-        typeId: null,
+        typeId: typeId,
         date: _selectedDate,
         details: _detailsController.text.trim().isEmpty
             ? null
@@ -286,6 +303,26 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
         if (mounted) {
           setState(() {
             _cachedTypes = List<String>.from(titles);
+            
+            // For editing existing rides, find the type title from typeId
+            if (widget.ride != null && widget.ride!.typeId != null && _selectedType == null) {
+              rideTypesAsync.when(
+                data: (types) {
+                  final matchingType = types.firstWhere(
+                    (type) => type['id'] == widget.ride!.typeId,
+                    orElse: () => <String, dynamic>{},
+                  );
+                  final typeTitle = matchingType['title'] as String?;
+                  if (typeTitle != null && _cachedTypes.contains(typeTitle)) {
+                    _selectedType = typeTitle;
+                  }
+                },
+                loading: () {},
+                error: (_, __) {},
+              );
+            }
+            
+            // For new rides, default to first type if none selected
             if (_selectedType == null && _cachedTypes.isNotEmpty) {
               _selectedType = _cachedTypes.first;
             }

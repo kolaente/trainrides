@@ -428,7 +428,20 @@ class TrainRideListItem extends StatelessWidget {
               const SizedBox(height: 8),
               Row(
                 children: [
-                  const SizedBox.shrink(),
+                  Consumer(
+                    builder: (context, ref, _) {
+                      final type = ref.watch(rideTypeByIdProvider(ride.typeId));
+                      if (type == null) return const SizedBox.shrink();
+                      final title = (type['title'] as String?) ?? (type['value'] as String?) ?? '';
+                      if (title.isEmpty) return const SizedBox.shrink();
+                      
+                      // Parse color from database
+                      final colorHex = type['color'] as String?;
+                      final typeColor = colorHex != null ? AppTheme.parseColor(colorHex) : null;
+                      
+                      return TypeLabel(type: title, color: typeColor);
+                    },
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     ride.displayPrice,

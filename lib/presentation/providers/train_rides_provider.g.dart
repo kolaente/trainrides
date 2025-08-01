@@ -40,8 +40,7 @@ final rideTypeTitlesProvider = AutoDisposeProvider<List<String>>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef RideTypeTitlesRef = AutoDisposeProviderRef<List<String>>;
-String _$trainRidesByDateRangeHash() =>
-    r'7ecc1dd631be0333781546a747cb94bdb77e6881';
+String _$rideTypeByIdHash() => r'2c7ce367c2dc8afaad4304084702970c91428a43';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -63,6 +62,127 @@ class _SystemHash {
     return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
   }
 }
+
+/// See also [rideTypeById].
+@ProviderFor(rideTypeById)
+const rideTypeByIdProvider = RideTypeByIdFamily();
+
+/// See also [rideTypeById].
+class RideTypeByIdFamily extends Family<Map<String, dynamic>?> {
+  /// See also [rideTypeById].
+  const RideTypeByIdFamily();
+
+  /// See also [rideTypeById].
+  RideTypeByIdProvider call(int? typeId) {
+    return RideTypeByIdProvider(typeId);
+  }
+
+  @override
+  RideTypeByIdProvider getProviderOverride(
+    covariant RideTypeByIdProvider provider,
+  ) {
+    return call(provider.typeId);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'rideTypeByIdProvider';
+}
+
+/// See also [rideTypeById].
+class RideTypeByIdProvider extends AutoDisposeProvider<Map<String, dynamic>?> {
+  /// See also [rideTypeById].
+  RideTypeByIdProvider(int? typeId)
+    : this._internal(
+        (ref) => rideTypeById(ref as RideTypeByIdRef, typeId),
+        from: rideTypeByIdProvider,
+        name: r'rideTypeByIdProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$rideTypeByIdHash,
+        dependencies: RideTypeByIdFamily._dependencies,
+        allTransitiveDependencies:
+            RideTypeByIdFamily._allTransitiveDependencies,
+        typeId: typeId,
+      );
+
+  RideTypeByIdProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.typeId,
+  }) : super.internal();
+
+  final int? typeId;
+
+  @override
+  Override overrideWith(
+    Map<String, dynamic>? Function(RideTypeByIdRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: RideTypeByIdProvider._internal(
+        (ref) => create(ref as RideTypeByIdRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        typeId: typeId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<Map<String, dynamic>?> createElement() {
+    return _RideTypeByIdProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is RideTypeByIdProvider && other.typeId == typeId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, typeId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin RideTypeByIdRef on AutoDisposeProviderRef<Map<String, dynamic>?> {
+  /// The parameter `typeId` of this provider.
+  int? get typeId;
+}
+
+class _RideTypeByIdProviderElement
+    extends AutoDisposeProviderElement<Map<String, dynamic>?>
+    with RideTypeByIdRef {
+  _RideTypeByIdProviderElement(super.provider);
+
+  @override
+  int? get typeId => (origin as RideTypeByIdProvider).typeId;
+}
+
+String _$trainRidesByDateRangeHash() =>
+    r'7ecc1dd631be0333781546a747cb94bdb77e6881';
 
 /// See also [trainRidesByDateRange].
 @ProviderFor(trainRidesByDateRange)

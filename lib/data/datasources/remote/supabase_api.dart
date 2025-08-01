@@ -32,7 +32,10 @@ class SupabaseApi {
   }
 
   Future<List<Map<String, dynamic>>> fetchRideTypes() async {
-    final rows = await client.from('ride_types').select();
+    final userId = client.auth.currentUser?.id;
+    if (userId == null) return [];
+    
+    final rows = await client.from('ride_types').select().eq('user_id', userId);
     return rows.cast<Map<String, dynamic>>();
   }
 

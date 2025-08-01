@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/models/train_ride.dart';
 import '../presentation/providers/train_rides_provider.dart';
+import '../presentation/providers/theme_provider.dart';
 import '../presentation/screens/add_ride/add_ride_screen.dart';
 import '../presentation/widgets/type_label.dart';
 import '../core/utils/date_utils.dart' as date_utils;
@@ -115,7 +116,20 @@ class _RideBottomSheetState extends ConsumerState<RideBottomSheet> {
                           ),
                         ),
                         SizedBox(width: 12),
-                        const SizedBox.shrink(),
+                        Consumer(
+                          builder: (context, ref, _) {
+                            final type = ref.watch(rideTypeByIdProvider(currentRide.typeId));
+                            if (type == null) return const SizedBox.shrink();
+                            final title = (type['title'] as String?) ?? (type['value'] as String?) ?? '';
+                            if (title.isEmpty) return const SizedBox.shrink();
+                            
+                            // Parse color from database
+                            final colorHex = type['color'] as String?;
+                            final typeColor = colorHex != null ? AppTheme.parseColor(colorHex) : null;
+                            
+                            return TypeLabel(type: title, color: typeColor);
+                          },
+                        ),
                         Spacer(),
                         Container(
                           padding: EdgeInsets.symmetric(

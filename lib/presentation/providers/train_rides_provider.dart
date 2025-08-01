@@ -104,6 +104,22 @@ List<String> rideTypeTitles(RideTypeTitlesRef ref) {
 }
 
 @riverpod
+Map<String, dynamic>? rideTypeById(RideTypeByIdRef ref, int? typeId) {
+  if (typeId == null) return null;
+  final types = ref.watch(rideTypesNotifierProvider);
+  return types.when<Map<String, dynamic>?>(
+    data: (list) {
+      for (final e in list) {
+        if (e['id'] == typeId) return e;
+      }
+      return null;
+    },
+    loading: () => null,
+    error: (_, __) => null,
+  );
+}
+
+@riverpod
 class TrainRideSearchNotifier extends _$TrainRideSearchNotifier {
   @override
   Future<List<model.TrainRide>> build(String query) async {

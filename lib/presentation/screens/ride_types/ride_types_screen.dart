@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/train_rides_provider.dart';
+import '../../providers/theme_provider.dart';
 
 class RideTypesScreen extends ConsumerWidget {
   const RideTypesScreen({super.key});
@@ -13,7 +14,7 @@ class RideTypesScreen extends ConsumerWidget {
     final titleCtrl = TextEditingController(
       text: initial?['title'] as String? ?? '',
     );
-    Color picked = _parseColor(initial?['color'] as String? ?? '#4895ef');
+    Color picked = AppTheme.parseColor(initial?['color'] as String? ?? '#4895ef');
 
     final ok = await showDialog<bool>(
       context: context,
@@ -133,7 +134,7 @@ class RideTypesScreen extends ConsumerWidget {
             separatorBuilder: (_, __) => const Divider(height: 1),
             itemBuilder: (context, index) {
               final item = sortedItems[index];
-              final color = _parseColor(item['color'] as String?);
+              final color = AppTheme.parseColor(item['color'] as String?);
               return ListTile(
                 leading: CircleAvatar(backgroundColor: color),
                 title: Text(item['title']?.toString() ?? ''),
@@ -177,16 +178,6 @@ class RideTypesScreen extends ConsumerWidget {
     );
   }
 
-  Color _parseColor(String? hex) {
-    final v = (hex ?? '').replaceAll('#', '');
-    if (v.length == 6) {
-      return Color(int.parse('FF$v', radix: 16));
-    }
-    if (v.length == 8) {
-      return Color(int.parse(v, radix: 16));
-    }
-    return const Color(0xFF4895EF);
-  }
 }
 
 class _ColorPickerDialog extends StatefulWidget {

@@ -3,19 +3,21 @@ import '../providers/theme_provider.dart';
 
 class TypeLabel extends StatelessWidget {
   final String type;
+  final Color? color;
   final double fontSize;
   final EdgeInsets padding;
 
   const TypeLabel({
     super.key,
     required this.type,
+    this.color,
     this.fontSize = 12,
     this.padding = const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
   });
 
   @override
   Widget build(BuildContext context) {
-    final typeColor = AppTheme.getColorForType(type);
+    final typeColor = color ?? AppTheme.getColorForType(type);
 
     return Container(
       padding: padding,

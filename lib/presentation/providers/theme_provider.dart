@@ -90,6 +90,18 @@ class AppTheme {
     return luminance > 0.5 ? Colors.black : Colors.white;
   }
 
+  // Helper method to parse color from hex string
+  static Color parseColor(String? hex) {
+    final v = (hex ?? '').replaceAll('#', '');
+    if (v.length == 6) {
+      return Color(int.parse('FF$v', radix: 16));
+    }
+    if (v.length == 8) {
+      return Color(int.parse(v, radix: 16));
+    }
+    return const Color(0xFF4895EF);
+  }
+
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
