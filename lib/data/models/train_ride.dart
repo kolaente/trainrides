@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import '../../core/constants/api_constants.dart';
 
 part 'train_ride.g.dart';
 
@@ -36,111 +35,6 @@ class TrainRide {
   factory TrainRide.fromJson(Map<String, dynamic> json) =>
       _$TrainRideFromJson(json);
   Map<String, dynamic> toJson() => _$TrainRideToJson(this);
-
-  static double _parsePrice(dynamic value) {
-    if (value == null) {
-      return 0.0;
-    }
-
-    double rawResult = 0.0;
-
-    if (value is num) {
-      rawResult = value.toDouble();
-    } else if (value is String) {
-      final parsed = double.tryParse(value);
-      rawResult = parsed ?? 0.0;
-    } else if (value is Map<String, dynamic>) {
-      final stringValue = value['value']?.toString();
-      if (stringValue != null) {
-        final parsed = double.tryParse(stringValue);
-        rawResult = parsed ?? 0.0;
-      }
-    } else {
-      return 0.0;
-    }
-
-    // Fix for Baserow field configuration issue: if price is suspiciously high and ends in 00,
-    // it might be multiplied by 100 (e.g., 42 becomes 4200)
-    // Only apply this fix if the price is abnormally high (>= 1000) and is a round number
-    if (rawResult >= 1000 && rawResult % 100 == 0) {
-      final correctedResult = rawResult / 100;
-      return correctedResult;
-    }
-
-    return rawResult;
-  }
-
-  static String _parseStringValue(dynamic value) {
-    if (value == null) return '';
-    if (value is String) return value;
-    if (value is Map<String, dynamic>) {
-      return value['value']?.toString() ?? '';
-    }
-    return value.toString();
-  }
-
-  factory TrainRide.fromBaserowJson(Map<String, dynamic> json) {
-    final dateString = _parseStringValue(
-      json[ApiConstants.fieldMapping['date']!],
-    );
-    final detailsString = _parseStringValue(
-      json[ApiConstants.fieldMapping['details']!],
-    );
-
-    final parsedPrice = _parsePrice(json[ApiConstants.fieldMapping['price']!]);
-
-    return TrainRide(
-      id: json['id'],
-      from: _parseStringValue(json[ApiConstants.fieldMapping['from']!]),
-      to: _parseStringValue(json[ApiConstants.fieldMapping['to']!]),
-      price: parsedPrice,
-      typeId: null,
-      date: DateTime.parse(
-        dateString.isNotEmpty ? dateString : DateTime.now().toIso8601String(),
-      ),
-      details: detailsString.isNotEmpty ? detailsString : null,
-      createdAt: DateTime.parse(
-        json['created_at'] ?? DateTime.now().toIso8601String(),
-      ),
-      userId: json['user_id'] as String?,
-    );
-  }
-
-  factory TrainRide.fromBaserowUserFieldJson(Map<String, dynamic> json) {
-    final dateString = _parseStringValue(json['date']);
-    final detailsString = _parseStringValue(json['details']);
-
-    final parsedPrice = _parsePrice(json['price']);
-
-    return TrainRide(
-      id: json['id'],
-      from: _parseStringValue(json['from']),
-      to: _parseStringValue(json['to']),
-      price: parsedPrice,
-      typeId: json['type_id'] as int?,
-      date: DateTime.parse(
-        dateString.isNotEmpty ? dateString : DateTime.now().toIso8601String(),
-      ),
-      details: detailsString.isNotEmpty ? detailsString : null,
-      createdAt: DateTime.parse(
-        json['created_at'] ?? DateTime.now().toIso8601String(),
-      ),
-      userId: json['user_id'] as String?,
-    );
-  }
-
-  Map<String, dynamic> toBaserowJson() {
-    final result = {
-      'from': from,
-      'to': to,
-      'price': price,
-      if (typeId != null) 'type_id': typeId,
-      'date': date.toIso8601String().split('T').first,
-      if (details != null) 'details': details,
-    };
-
-    return result;
-  }
 
   TrainRide copyWith({
     int? id,

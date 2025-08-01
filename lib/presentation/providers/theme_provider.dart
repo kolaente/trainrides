@@ -53,8 +53,7 @@ class AppTheme {
   static const Color _color9 = Color(0xFF4895ef); // Light blue
   static const Color _color10 = Color(0xFF4cc9f0); // Cyan
 
-  // Baserow color mapping for type labels
-  static const Map<String, Color> baserowColors = {
+  static const Map<String, Color> typeColors = {
     'dark-blue': Color(0xFF1E3A8A),
     'light-pink': Color(0xFFFBBBBB),
     'darker-gray': Color(0xFF374151),
@@ -63,26 +62,24 @@ class AppTheme {
     'light-blue': Color(0xFFBFDBFE),
   };
 
-  // Helper method to get Baserow color for a type value
-  static Color getBaserowColorForType(String? typeValue) {
-    if (typeValue == null) return baserowColors['dark-blue']!;
+  static Color getColorForType(String? typeValue) {
+    if (typeValue == null) return typeColors['dark-blue']!;
 
-    // Map type values to their Baserow colors based on fields.json
     switch (typeValue) {
       case 'DPSG Bund':
-        return baserowColors['dark-blue']!;
+        return typeColors['dark-blue']!;
       case 'DPSG Sonstiges':
-        return baserowColors['light-pink']!;
+        return typeColors['light-pink']!;
       case 'Spaß':
-        return baserowColors['darker-gray']!;
+        return typeColors['darker-gray']!;
       case 'Hannah besuchen':
-        return baserowColors['light-yellow']!;
+        return typeColors['light-yellow']!;
       case 'WSJ':
-        return baserowColors['darker-purple']!;
+        return typeColors['darker-purple']!;
       case 'Ironscout 26 Orga':
-        return baserowColors['light-blue']!;
+        return typeColors['light-blue']!;
       default:
-        return baserowColors['dark-blue']!;
+        return typeColors['dark-blue']!;
     }
   }
 
