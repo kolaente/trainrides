@@ -1,20 +1,21 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../data/models/train_ride.dart' as model;
-import '../../data/datasources/remote/baserow_api.dart';
+import '../../data/datasources/remote/supabase_api.dart';
 
 part 'train_rides_provider.g.dart';
 
 @riverpod
-BaserowApi baserowApi(BaserowApiRef ref) {
-  return BaserowApi();
+SupabaseApi supabaseApi(SupabaseApiRef ref) {
+  return SupabaseApi(Supabase.instance.client);
 }
 
 @riverpod
 class TrainRidesNotifier extends _$TrainRidesNotifier {
   @override
   Future<List<model.TrainRide>> build() async {
-    final api = ref.read(baserowApiProvider);
-    return await api.getTrainRides(orderBy: '-field_13814');
+    final api = ref.read(supabaseApiProvider);
+    return await api.fetchRides();
   }
 
   Future<void> refresh() async {
@@ -23,8 +24,8 @@ class TrainRidesNotifier extends _$TrainRidesNotifier {
 
   Future<void> addTrainRide(model.TrainRide ride) async {
     try {
-      final api = ref.read(baserowApiProvider);
-      await api.createTrainRide(ride);
+      final api = ref.read(supabaseApiProvider);
+      await api.addRide(ride.toJson());
       ref.invalidateSelf();
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
@@ -33,8 +34,8 @@ class TrainRidesNotifier extends _$TrainRidesNotifier {
 
   Future<void> updateTrainRide(model.TrainRide ride) async {
     try {
-      final api = ref.read(baserowApiProvider);
-      await api.updateTrainRide(ride);
+      final api = ref.read(supabaseApiProvider);
+      await api.updateRide(ride.id!, ride.toJson());
       ref.invalidateSelf();
 
       // Invalidate the individual ride cache
@@ -48,8 +49,8 @@ class TrainRidesNotifier extends _$TrainRidesNotifier {
 
   Future<void> deleteTrainRide(int id) async {
     try {
-      final api = ref.read(baserowApiProvider);
-      await api.deleteTrainRide(id);
+      final api = ref.read(supabaseApiProvider);
+      await api.deleteRide(id);
       ref.invalidateSelf();
 
       // Invalidate the individual ride cache
@@ -138,10 +139,15 @@ Future<List<model.TrainRide>> trainRidesByDateRange(
 
 @riverpod
 Future<model.TrainRide?> trainRideById(TrainRideByIdRef ref, int id) async {
-  final api = ref.read(baserowApiProvider);
+  final api = ref.read(supabaseApiProvider);
 
   try {
-    return await api.getTrainRideById(id);
+    final list = await api.fetchRides();
+    try {
+      return list.firstWhere((e) => e.id == id);
+    } catch (_) {
+      return null;
+    }
   } catch (e) {
     return null;
   }

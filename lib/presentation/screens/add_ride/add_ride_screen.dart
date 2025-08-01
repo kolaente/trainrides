@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/train_rides_provider.dart';
 import '../../../data/models/train_ride.dart' as model;
 import '../../../core/utils/date_utils.dart' as date_utils;
-import '../../../data/datasources/remote/baserow_api.dart';
+import '../../../data/datasources/remote/supabase_api.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AddRideScreen extends ConsumerStatefulWidget {
   final model.TrainRide? ride;
@@ -24,8 +25,9 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
   DateTime _selectedDate = DateTime.now();
   String? _selectedType;
   bool _isLoading = false;
+  List<Map<String, dynamic>> _cachedTypes = const [];
 
-  List<Map<String, dynamic>> get _typeOptions => BaserowApi().typeOptions;
+  List<Map<String, dynamic>> get _typeOptions => _cachedTypes;
 
   @override
   void initState() {

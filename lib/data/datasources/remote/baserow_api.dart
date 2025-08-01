@@ -40,8 +40,9 @@ class BaserowApi {
             typeField['select_options'],
           );
           // Sort type options alphabetically by value
-          _typeOptions.sort((a, b) => 
-            (a['value'] as String).compareTo(b['value'] as String));
+          _typeOptions.sort(
+            (a, b) => (a['value'] as String).compareTo(b['value'] as String),
+          );
         }
       }
     } on SocketException {

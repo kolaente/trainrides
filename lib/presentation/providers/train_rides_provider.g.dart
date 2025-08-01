@@ -6,25 +6,25 @@ part of 'train_rides_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$baserowApiHash() => r'629b7e95e3b7e61304780a0ac1fc3f992ed46b55';
+String _$supabaseApiHash() => r'52be0e70e0140e126ea34bf44522e6b25bc0b6c2';
 
-/// See also [baserowApi].
-@ProviderFor(baserowApi)
-final baserowApiProvider = AutoDisposeProvider<BaserowApi>.internal(
-  baserowApi,
-  name: r'baserowApiProvider',
+/// See also [supabaseApi].
+@ProviderFor(supabaseApi)
+final supabaseApiProvider = AutoDisposeProvider<SupabaseApi>.internal(
+  supabaseApi,
+  name: r'supabaseApiProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$baserowApiHash,
+      : _$supabaseApiHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef BaserowApiRef = AutoDisposeProviderRef<BaserowApi>;
+typedef SupabaseApiRef = AutoDisposeProviderRef<SupabaseApi>;
 String _$trainRidesByDateRangeHash() =>
-    r'9a21e4562daf81a0cf573422535ab6423f554090';
+    r'7ecc1dd631be0333781546a747cb94bdb77e6881';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -182,7 +182,7 @@ class _TrainRidesByDateRangeProviderElement
   DateTime get end => (origin as TrainRidesByDateRangeProvider).end;
 }
 
-String _$trainRideByIdHash() => r'8dae9b02d55fc4a25bbdc2e8284abea247b87b7e';
+String _$trainRideByIdHash() => r'4446f44923f73659f0c51095131b98c32e5040f5';
 
 /// See also [trainRideById].
 @ProviderFor(trainRideById)
@@ -304,7 +304,7 @@ class _TrainRideByIdProviderElement
 }
 
 String _$trainRidesNotifierHash() =>
-    r'481a94217110628dd90e90a81abd7248606aa91f';
+    r'40c7464ce08f65cb66d7f2dfccf66516b14fecea';
 
 /// See also [TrainRidesNotifier].
 @ProviderFor(TrainRidesNotifier)
@@ -324,7 +324,7 @@ final trainRidesNotifierProvider =
 
 typedef _$TrainRidesNotifier = AutoDisposeAsyncNotifier<List<model.TrainRide>>;
 String _$trainRideSearchNotifierHash() =>
-    r'956b96bb03106bea62d570879d09a84e629395b4';
+    r'907e81920a4aefb108334b5a7ab36924a1524312';
 
 abstract class _$TrainRideSearchNotifier
     extends BuildlessAutoDisposeAsyncNotifier<List<model.TrainRide>> {

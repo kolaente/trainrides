@@ -286,7 +286,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                   );
                 }
-                
+
                 final ride = trainRides[index - 1];
                 return TrainRideListItem(
                   ride: ride,

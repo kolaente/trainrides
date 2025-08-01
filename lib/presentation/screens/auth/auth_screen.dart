@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/auth_provider.dart';
-import '../../providers/theme_provider.dart';
 
 class AuthScreen extends ConsumerStatefulWidget {
   const AuthScreen({super.key});
@@ -12,20 +11,32 @@ class AuthScreen extends ConsumerStatefulWidget {
 
 class _AuthScreenState extends ConsumerState<AuthScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _tokenController = TextEditingController();
-  bool _isTokenVisible = false;
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _isPasswordVisible = false;
 
   @override
   void dispose() {
-    _tokenController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
-  void _handleSubmit() {
+  void _signIn() {
     if (_formKey.currentState?.validate() ?? false) {
-      ref
-          .read(authNotifierProvider.notifier)
-          .authenticate(_tokenController.text.trim());
+      ref.read(authNotifierProvider.notifier).signIn(
+            _emailController.text.trim(),
+            _passwordController.text,
+          );
+    }
+  }
+
+  void _signUp() {
+    if (_formKey.currentState?.validate() ?? false) {
+      ref.read(authNotifierProvider.notifier).signUp(
+            _emailController.text.trim(),
+            _passwordController.text,
+          );
     }
   }
 
@@ -43,7 +54,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 40),
-                // App branding
                 Column(
                   children: [
                     Container(
@@ -85,15 +95,12 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   ],
                 ),
                 const SizedBox(height: 48),
-                // Authentication form
                 Card(
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                     side: BorderSide(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.outline.withOpacity(0.3),
+                      color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
                       width: 1,
                     ),
                   ),
@@ -102,7 +109,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                     child: Column(
                       children: [
                         Text(
-                          'Welcome Back!',
+                          'Welcome',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
@@ -111,32 +118,53 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Enter your Baserow API token to continue',
+                          'Sign in or create an account',
                           style: TextStyle(
                             fontSize: 14,
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSurfaceVariant,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 24),
                         TextFormField(
-                          controller: _tokenController,
-                          obscureText: !_isTokenVisible,
+                          controller: _emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          autocorrect: false,
+                          enableSuggestions: false,
                           decoration: InputDecoration(
-                            labelText: 'API Token',
-                            hintText: 'Enter your Baserow API token',
-                            prefixIcon: const Icon(Icons.vpn_key),
+                            labelText: 'Email',
+                            hintText: 'you@example.com',
+                            prefixIcon: const Icon(Icons.email),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Please enter your email';
+                            }
+                            if (!value.contains('@')) {
+                              return 'Invalid email';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        TextFormField(
+                          controller: _passwordController,
+                          obscureText: !_isPasswordVisible,
+                          autocorrect: false,
+                          enableSuggestions: false,
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            prefixIcon: const Icon(Icons.lock),
                             suffixIcon: IconButton(
                               icon: Icon(
-                                _isTokenVisible
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
+                                _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
                               ),
                               onPressed: () {
                                 setState(() {
-                                  _isTokenVisible = !_isTokenVisible;
+                                  _isPasswordVisible = !_isPasswordVisible;
                                 });
                               },
                             ),
@@ -145,47 +173,60 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                             ),
                           ),
                           validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Please enter your API token';
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your password';
                             }
-                            if (value.trim().length < 10) {
-                              return 'Token seems too short';
+                            if (value.length < 6) {
+                              return 'Min 6 characters';
                             }
                             return null;
                           },
-                          onFieldSubmitted: (_) => _handleSubmit(),
+                          onFieldSubmitted: (_) => _signIn(),
                         ),
                         const SizedBox(height: 24),
                         authState.when(
                           data: (state) {
+                            final buttons = <Widget>[
+                              ElevatedButton.icon(
+                                onPressed: _signIn,
+                                style: ElevatedButton.styleFrom(
+                                  minimumSize: const Size(double.infinity, 48),
+                                  backgroundColor: Theme.of(context).colorScheme.primary,
+                                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                                ),
+                                icon: const Icon(Icons.login),
+                                label: const Text('Sign In'),
+                              ),
+                              const SizedBox(height: 12),
+                              OutlinedButton.icon(
+                                onPressed: _signUp,
+                                icon: const Icon(Icons.person_add),
+                                label: const Text('Create account'),
+                              ),
+                            ];
+
                             if (state.hasError) {
                               return Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
                                   Container(
                                     padding: const EdgeInsets.all(16),
                                     decoration: BoxDecoration(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.errorContainer,
+                                      color: Theme.of(context).colorScheme.errorContainer,
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Row(
                                       children: [
                                         Icon(
                                           Icons.error_outline,
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.error,
+                                          color: Theme.of(context).colorScheme.error,
                                         ),
                                         const SizedBox(width: 12),
                                         Expanded(
                                           child: Text(
-                                            state.error ??
-                                                'Authentication failed',
+                                            state.error ?? 'Authentication failed',
                                             style: TextStyle(
-                                              color: Theme.of(
-                                                context,
-                                              ).colorScheme.onErrorContainer,
+                                              color: Theme.of(context).colorScheme.onErrorContainer,
                                               fontWeight: FontWeight.w500,
                                             ),
                                           ),
@@ -194,101 +235,61 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                                     ),
                                   ),
                                   const SizedBox(height: 16),
-                                  ElevatedButton.icon(
-                                    onPressed: _handleSubmit,
-                                    style: ElevatedButton.styleFrom(
-                                      minimumSize: const Size(
-                                        double.infinity,
-                                        48,
-                                      ),
-                                      backgroundColor: Theme.of(
-                                        context,
-                                      ).colorScheme.primary,
-                                      foregroundColor: Theme.of(
-                                        context,
-                                      ).colorScheme.onPrimary,
-                                    ),
-                                    icon: const Icon(Icons.refresh),
-                                    label: const Text('Try Again'),
-                                  ),
+                                  ...buttons,
                                 ],
                               );
                             }
 
-                            return ElevatedButton.icon(
-                              onPressed: _handleSubmit,
-                              style: ElevatedButton.styleFrom(
-                                minimumSize: const Size(double.infinity, 48),
-                                backgroundColor: Theme.of(
-                                  context,
-                                ).colorScheme.primary,
-                                foregroundColor: Theme.of(
-                                  context,
-                                ).colorScheme.onPrimary,
-                              ),
-                              icon: const Icon(Icons.login),
-                              label: const Text('Authenticate'),
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: buttons,
                             );
                           },
                           loading: () => ElevatedButton(
                             onPressed: null,
                             style: ElevatedButton.styleFrom(
                               minimumSize: const Size(double.infinity, 48),
-                              backgroundColor: Theme.of(
-                                context,
-                              ).colorScheme.primary.withOpacity(0.7),
+                              backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.7),
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                SizedBox(
+                                const SizedBox(
                                   width: 20,
                                   height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Theme.of(context).colorScheme.onPrimary,
-                                    ),
-                                  ),
+                                  child: CircularProgressIndicator(strokeWidth: 2),
                                 ),
                                 const SizedBox(width: 12),
                                 Text(
                                   'Authenticating...',
                                   style: TextStyle(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onPrimary,
+                                    color: Theme.of(context).colorScheme.onPrimary,
                                   ),
                                 ),
                               ],
                             ),
                           ),
                           error: (error, stack) => Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               Container(
                                 padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.errorContainer,
+                                  color: Theme.of(context).colorScheme.errorContainer,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Row(
                                   children: [
                                     Icon(
                                       Icons.error_outline,
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.error,
+                                      color: Theme.of(context).colorScheme.error,
                                     ),
                                     const SizedBox(width: 12),
                                     Expanded(
                                       child: Text(
                                         'Authentication failed: ${error.toString()}',
                                         style: TextStyle(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.onErrorContainer,
+                                          color: Theme.of(context).colorScheme.onErrorContainer,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
@@ -298,18 +299,20 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                               ),
                               const SizedBox(height: 16),
                               ElevatedButton.icon(
-                                onPressed: _handleSubmit,
+                                onPressed: _signIn,
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: const Size(double.infinity, 48),
-                                  backgroundColor: Theme.of(
-                                    context,
-                                  ).colorScheme.primary,
-                                  foregroundColor: Theme.of(
-                                    context,
-                                  ).colorScheme.onPrimary,
+                                  backgroundColor: Theme.of(context).colorScheme.primary,
+                                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
                                 ),
                                 icon: const Icon(Icons.refresh),
-                                label: const Text('Try Again'),
+                                label: const Text('Sign In'),
+                              ),
+                              const SizedBox(height: 12),
+                              OutlinedButton.icon(
+                                onPressed: _signUp,
+                                icon: const Icon(Icons.person_add),
+                                label: const Text('Create account'),
                               ),
                             ],
                           ),
@@ -319,15 +322,12 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                // Help info
                 Card(
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                     side: BorderSide(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.outline.withOpacity(0.3),
+                      color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
                       width: 1,
                     ),
                   ),
@@ -335,74 +335,13 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                     padding: const EdgeInsets.all(20),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.info_outline,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                            const SizedBox(width: 12),
-                            Text(
-                              'How to get your API token:',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        _buildInfoStep(
-                          '1',
-                          'Go to your Baserow account settings',
-                        ),
-                        _buildInfoStep(
-                          '2',
-                          'Navigate to the "API tokens" section',
-                        ),
-                        _buildInfoStep(
-                          '3',
-                          'Create a new token with read/write permissions',
-                        ),
-                        _buildInfoStep(
-                          '4',
-                          'Copy the token and paste it above',
-                        ),
-                        const SizedBox(height: 16),
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.secondaryContainer.withOpacity(0.5),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.security,
-                                size: 16,
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSecondaryContainer,
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  'Your token will be stored securely on this device.',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSecondaryContainer,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                      children: const [
+                        SizedBox(height: 16),
+                        Text('Tips:'),
+                        SizedBox(height: 8),
+                        Text('• Use a valid email address'),
+                        SizedBox(height: 4),
+                        Text('• Choose a strong password'),
                       ],
                     ),
                   ),
@@ -412,45 +351,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildInfoStep(String number, String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 24,
-            height: 24,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Center(
-              child: Text(
-                number,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 12,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              text,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface,
-                fontSize: 14,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
