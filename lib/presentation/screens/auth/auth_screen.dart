@@ -24,19 +24,17 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
   void _signIn() {
     if (_formKey.currentState?.validate() ?? false) {
-      ref.read(authNotifierProvider.notifier).signIn(
-            _emailController.text.trim(),
-            _passwordController.text,
-          );
+      ref
+          .read(authNotifierProvider.notifier)
+          .signIn(_emailController.text.trim(), _passwordController.text);
     }
   }
 
   void _signUp() {
     if (_formKey.currentState?.validate() ?? false) {
-      ref.read(authNotifierProvider.notifier).signUp(
-            _emailController.text.trim(),
-            _passwordController.text,
-          );
+      ref
+          .read(authNotifierProvider.notifier)
+          .signUp(_emailController.text.trim(), _passwordController.text);
     }
   }
 
@@ -100,7 +98,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                     side: BorderSide(
-                      color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.outline.withOpacity(0.3),
                       width: 1,
                     ),
                   ),
@@ -121,7 +121,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                           'Sign in or create an account',
                           style: TextStyle(
                             fontSize: 14,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -160,7 +162,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                             prefixIcon: const Icon(Icons.lock),
                             suffixIcon: IconButton(
                               icon: Icon(
-                                _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                                _isPasswordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
                               ),
                               onPressed: () {
                                 setState(() {
@@ -191,8 +195,12 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                                 onPressed: _signIn,
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: const Size(double.infinity, 48),
-                                  backgroundColor: Theme.of(context).colorScheme.primary,
-                                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                                  backgroundColor: Theme.of(
+                                    context,
+                                  ).colorScheme.primary,
+                                  foregroundColor: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimary,
                                 ),
                                 icon: const Icon(Icons.login),
                                 label: const Text('Sign In'),
@@ -212,21 +220,28 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                                   Container(
                                     padding: const EdgeInsets.all(16),
                                     decoration: BoxDecoration(
-                                      color: Theme.of(context).colorScheme.errorContainer,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.errorContainer,
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Row(
                                       children: [
                                         Icon(
                                           Icons.error_outline,
-                                          color: Theme.of(context).colorScheme.error,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.error,
                                         ),
                                         const SizedBox(width: 12),
                                         Expanded(
                                           child: Text(
-                                            state.error ?? 'Authentication failed',
+                                            state.error ??
+                                                'Authentication failed',
                                             style: TextStyle(
-                                              color: Theme.of(context).colorScheme.onErrorContainer,
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.onErrorContainer,
                                               fontWeight: FontWeight.w500,
                                             ),
                                           ),
@@ -249,7 +264,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                             onPressed: null,
                             style: ElevatedButton.styleFrom(
                               minimumSize: const Size(double.infinity, 48),
-                              backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                              backgroundColor: Theme.of(
+                                context,
+                              ).colorScheme.primary.withOpacity(0.7),
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -257,13 +274,17 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                                 const SizedBox(
                                   width: 20,
                                   height: 20,
-                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
                                 ),
                                 const SizedBox(width: 12),
                                 Text(
                                   'Authenticating...',
                                   style: TextStyle(
-                                    color: Theme.of(context).colorScheme.onPrimary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onPrimary,
                                   ),
                                 ),
                               ],
@@ -275,21 +296,27 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                               Container(
                                 padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.errorContainer,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.errorContainer,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Row(
                                   children: [
                                     Icon(
                                       Icons.error_outline,
-                                      color: Theme.of(context).colorScheme.error,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.error,
                                     ),
                                     const SizedBox(width: 12),
                                     Expanded(
                                       child: Text(
                                         'Authentication failed: ${error.toString()}',
                                         style: TextStyle(
-                                          color: Theme.of(context).colorScheme.onErrorContainer,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onErrorContainer,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
@@ -302,8 +329,12 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                                 onPressed: _signIn,
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: const Size(double.infinity, 48),
-                                  backgroundColor: Theme.of(context).colorScheme.primary,
-                                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                                  backgroundColor: Theme.of(
+                                    context,
+                                  ).colorScheme.primary,
+                                  foregroundColor: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimary,
                                 ),
                                 icon: const Icon(Icons.refresh),
                                 label: const Text('Sign In'),
@@ -327,7 +358,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                     side: BorderSide(
-                      color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.outline.withOpacity(0.3),
                       width: 1,
                     ),
                   ),

@@ -15,7 +15,7 @@ class TypeLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final typeColor = AppTheme.getBaserowColorForType(type);
+    final typeColor = AppTheme.getColorForType(type);
 
     return Container(
       padding: padding,

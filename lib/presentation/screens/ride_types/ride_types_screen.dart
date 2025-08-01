@@ -5,8 +5,14 @@ import '../../providers/train_rides_provider.dart';
 class RideTypesScreen extends ConsumerWidget {
   const RideTypesScreen({super.key});
 
-  Future<void> _addOrEdit(BuildContext context, WidgetRef ref, {Map<String, dynamic>? initial}) async {
-    final titleCtrl = TextEditingController(text: initial?['title'] as String? ?? '');
+  Future<void> _addOrEdit(
+    BuildContext context,
+    WidgetRef ref, {
+    Map<String, dynamic>? initial,
+  }) async {
+    final titleCtrl = TextEditingController(
+      text: initial?['title'] as String? ?? '',
+    );
     Color picked = _parseColor(initial?['color'] as String? ?? '#4895ef');
 
     final ok = await showDialog<bool>(
@@ -30,7 +36,8 @@ class RideTypesScreen extends ConsumerWidget {
                     onTap: () async {
                       final res = await showDialog<Color?>(
                         context: ctx,
-                        builder: (_) => _ColorPickerDialog(initialColor: picked),
+                        builder: (_) =>
+                            _ColorPickerDialog(initialColor: picked),
                       );
                       if (res != null) setLocalState(() => picked = res);
                     },
@@ -49,8 +56,14 @@ class RideTypesScreen extends ConsumerWidget {
             ],
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-            FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Save')),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('Save'),
+            ),
           ],
         ),
       ),
@@ -61,10 +74,11 @@ class RideTypesScreen extends ConsumerWidget {
     final title = titleCtrl.text.trim();
     if (title.isEmpty) return;
 
-    final colorHex = '#${picked.value.toRadixString(16).padLeft(8, '0').substring(2)}';
+    final colorHex =
+        '#${picked.value.toRadixString(16).padLeft(8, '0').substring(2)}';
 
     final notifier = ref.read(rideTypesNotifierProvider.notifier);
-    
+
     try {
       if ((initial?['id']) != null) {
         await notifier.updateRideType(initial!['id'] as int, title, colorHex);
@@ -73,23 +87,23 @@ class RideTypesScreen extends ConsumerWidget {
       }
     } catch (error) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $error')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: $error')));
       }
     }
   }
 
   Future<void> _delete(BuildContext context, WidgetRef ref, int id) async {
     final notifier = ref.read(rideTypesNotifierProvider.notifier);
-    
+
     try {
       await notifier.deleteRideType(id);
     } catch (error) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Delete error: $error')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Delete error: $error')));
       }
     }
   }
@@ -97,19 +111,23 @@ class RideTypesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final rideTypesAsync = ref.watch(rideTypesNotifierProvider);
-    
+
     return Scaffold(
       appBar: AppBar(title: const Text('Ride types')),
       body: rideTypesAsync.when(
         data: (items) {
           // Sort items alphabetically by title
           final sortedItems = List<Map<String, dynamic>>.from(items);
-          sortedItems.sort((a, b) => (a['title'] as String? ?? '').compareTo(b['title'] as String? ?? ''));
-          
+          sortedItems.sort(
+            (a, b) => (a['title'] as String? ?? '').compareTo(
+              b['title'] as String? ?? '',
+            ),
+          );
+
           if (sortedItems.isEmpty) {
             return const Center(child: Text('No ride types yet'));
           }
-          
+
           return ListView.separated(
             itemCount: sortedItems.length,
             separatorBuilder: (_, __) => const Divider(height: 1),
@@ -216,13 +234,24 @@ class _ColorPickerDialogState extends State<_ColorPickerDialog> {
         ],
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-        FilledButton(onPressed: () => Navigator.pop(context, color), child: const Text('Use')),
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(context, color),
+          child: const Text('Use'),
+        ),
       ],
     );
   }
 
-  Widget _slider(String label, double value, ValueChanged<double> onChanged, Color active) {
+  Widget _slider(
+    String label,
+    double value,
+    ValueChanged<double> onChanged,
+    Color active,
+  ) {
     return Row(
       children: [
         SizedBox(width: 20, child: Text(label)),

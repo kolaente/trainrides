@@ -26,11 +26,13 @@ class TrainRidesNotifier extends _$TrainRidesNotifier {
     try {
       final api = ref.read(supabaseApiProvider);
       final currentUser = api.client.auth.currentUser;
-      
+
       if (currentUser == null) {
-        throw Exception('You must be signed in to add train rides. Please sign in and try again.');
+        throw Exception(
+          'You must be signed in to add train rides. Please sign in and try again.',
+        );
       }
-      
+
       // Ensure the ride includes the current user's ID
       final rideWithUserId = ride.copyWith(userId: currentUser.id);
       await api.addRide(rideWithUserId.toJson());
@@ -44,15 +46,17 @@ class TrainRidesNotifier extends _$TrainRidesNotifier {
     try {
       final api = ref.read(supabaseApiProvider);
       final currentUser = api.client.auth.currentUser;
-      
+
       if (currentUser == null) {
-        throw Exception('You must be signed in to update train rides. Please sign in and try again.');
+        throw Exception(
+          'You must be signed in to update train rides. Please sign in and try again.',
+        );
       }
-      
+
       if (ride.id == null) {
         throw Exception('Cannot update ride without an ID.');
       }
-      
+
       await api.updateRide(ride.id!, ride.toJson());
       ref.invalidateSelf();
 
@@ -67,11 +71,13 @@ class TrainRidesNotifier extends _$TrainRidesNotifier {
     try {
       final api = ref.read(supabaseApiProvider);
       final currentUser = api.client.auth.currentUser;
-      
+
       if (currentUser == null) {
-        throw Exception('You must be signed in to delete train rides. Please sign in and try again.');
+        throw Exception(
+          'You must be signed in to delete train rides. Please sign in and try again.',
+        );
       }
-      
+
       await api.deleteRide(id);
       ref.invalidateSelf();
 
@@ -82,7 +88,6 @@ class TrainRidesNotifier extends _$TrainRidesNotifier {
     }
   }
 }
-
 
 @riverpod
 List<String> rideTypeTitles(RideTypeTitlesRef ref) {
@@ -154,7 +159,6 @@ class TrainRideSearchNotifier extends _$TrainRideSearchNotifier {
   }
 }
 
-
 @riverpod
 Future<List<model.TrainRide>> trainRidesByDateRange(
   TrainRidesByDateRangeRef ref,
@@ -191,7 +195,6 @@ Future<model.TrainRide?> trainRideById(TrainRideByIdRef ref, int id) async {
   }
 }
 
-
 @riverpod
 class RideTypesNotifier extends _$RideTypesNotifier {
   @override
@@ -221,10 +224,7 @@ class RideTypesNotifier extends _$RideTypesNotifier {
   Future<void> updateRideType(int id, String title, String color) async {
     try {
       final api = ref.read(supabaseApiProvider);
-      await api.updateRideType(id, {
-        'title': title,
-        'color': color,
-      });
+      await api.updateRideType(id, {'title': title, 'color': color});
       ref.invalidateSelf();
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
@@ -241,4 +241,3 @@ class RideTypesNotifier extends _$RideTypesNotifier {
     }
   }
 }
-

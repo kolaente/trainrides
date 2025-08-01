@@ -11,13 +11,13 @@ Future<void> main() async {
     anonKey:
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxoeXV4Y2V0cGFndmFxaWlyYmFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQwNzI0MDIsImV4cCI6MjA2OTY0ODQwMn0.qphRuNRmIomKtI97-FN7KAAzXurFJr3_rcBFLuXPAZ4',
   );
-  
+
   final container = ProviderContainer();
-  
+
   // Initialize auth state listener
   final authNotifier = container.read(authNotifierProvider.notifier);
   authNotifier.listenAuthChanges();
-  
+
   runApp(
     UncontrolledProviderScope(
       container: container,

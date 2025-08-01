@@ -208,10 +208,7 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
                     items: _typeOptions.map<DropdownMenuItem<String>>((title) {
                       return DropdownMenuItem<String>(
                         value: title,
-                        child: Text(
-                          title,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        child: Text(title, overflow: TextOverflow.ellipsis),
                       );
                     }).toList(),
                     onChanged: (value) {
@@ -273,16 +270,17 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
   void _loadTypes() {
     final rideTypesAsync = ref.watch(rideTypesNotifierProvider);
     final titles = rideTypesAsync.when(
-      data: (types) => types
-          .map((e) => (e['title'] as String?) ?? '')
-          .where((s) => s.isNotEmpty)
-          .toList()
-          ..sort(),
+      data: (types) =>
+          types
+              .map((e) => (e['title'] as String?) ?? '')
+              .where((s) => s.isNotEmpty)
+              .toList()
+            ..sort(),
       loading: () => const <String>[],
       error: (_, __) => const <String>[],
     );
-    
-    if (_cachedTypes.length != titles.length || 
+
+    if (_cachedTypes.length != titles.length ||
         !_cachedTypes.every((element) => titles.contains(element))) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {

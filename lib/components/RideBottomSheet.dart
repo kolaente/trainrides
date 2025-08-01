@@ -28,7 +28,7 @@ class _RideBottomSheetState extends ConsumerState<RideBottomSheet> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    
+
     // Watch the current ride from the provider to get real-time updates
     final rideAsync = ref.watch(trainRideByIdProvider(widget.ride.id!));
     final currentRide = rideAsync.when(
@@ -186,12 +186,7 @@ class _RideBottomSheetState extends ConsumerState<RideBottomSheet> {
                 ),
                 SizedBox(width: 16),
                 Expanded(
-                  child: _buildSystemInfo(
-                    context,
-                    Icons.update,
-                    'Updated',
-                    '',
-                  ),
+                  child: _buildSystemInfo(context, Icons.update, 'Updated', ''),
                 ),
               ],
             ),
