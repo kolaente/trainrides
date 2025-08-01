@@ -152,3 +152,53 @@ Future<model.TrainRide?> trainRideById(TrainRideByIdRef ref, int id) async {
     return null;
   }
 }
+
+@riverpod
+class RideTypesNotifier extends _$RideTypesNotifier {
+  @override
+  Future<List<Map<String, dynamic>>> build() async {
+    final api = ref.read(supabaseApiProvider);
+    return await api.fetchRideTypes();
+  }
+
+  Future<void> refresh() async {
+    ref.invalidateSelf();
+  }
+
+  Future<void> addRideType(String title, String color) async {
+    try {
+      final api = ref.read(supabaseApiProvider);
+      await api.addRideType({
+        'title': title,
+        'color': color,
+        'user_id': api.client.auth.currentUser?.id,
+      });
+      ref.invalidateSelf();
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+    }
+  }
+
+  Future<void> updateRideType(int id, String title, String color) async {
+    try {
+      final api = ref.read(supabaseApiProvider);
+      await api.updateRideType(id, {
+        'title': title,
+        'color': color,
+      });
+      ref.invalidateSelf();
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+    }
+  }
+
+  Future<void> deleteRideType(int id) async {
+    try {
+      final api = ref.read(supabaseApiProvider);
+      await api.deleteRideType(id);
+      ref.invalidateSelf();
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+    }
+  }
+}

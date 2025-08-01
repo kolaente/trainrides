@@ -9,6 +9,7 @@ import '../../../data/models/train_ride.dart' as model;
 import '../../../core/utils/date_utils.dart' as date_utils;
 import '../../widgets/type_label.dart';
 import '../../../components/RideBottomSheet.dart';
+import '../ride_types/ride_types_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -32,6 +33,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       appBar: AppBar(
         title: const Text('Train Rides'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.category_outlined),
+            tooltip: 'Ride types',
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const RideTypesScreen(),
+                ),
+              );
+            },
+          ),
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert),
             onSelected: (value) async {

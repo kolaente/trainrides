@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/train_rides_provider.dart';
 import '../../../data/models/train_ride.dart' as model;
 import '../../../core/utils/date_utils.dart' as date_utils;
-import '../../../data/datasources/remote/supabase_api.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AddRideScreen extends ConsumerStatefulWidget {
@@ -40,9 +39,8 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
       _selectedDate = widget.ride!.date;
       _selectedType = widget.ride!.type;
     } else {
-      // Set default to first option if available
       if (_typeOptions.isNotEmpty) {
-        _selectedType = _typeOptions.first['value'];
+        _selectedType = (_typeOptions.first['title'] as String?) ?? (_typeOptions.first['value'] as String?);
       }
     }
   }
@@ -213,10 +211,11 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
                       prefixIcon: Icon(Icons.train),
                     ),
                     items: _typeOptions.map<DropdownMenuItem<String>>((option) {
+                      final title = (option['title'] as String?) ?? (option['value'] as String?) ?? '';
                       return DropdownMenuItem<String>(
-                        value: option['value'] as String,
+                        value: title,
                         child: Text(
-                          option['value'] as String,
+                          title,
                           overflow: TextOverflow.ellipsis,
                         ),
                       );
@@ -275,5 +274,19 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _loadTypes() async {
+    final uid = Supabase.instance.client.auth.currentUser?.id;
+    final query = Supabase.instance.client.from('ride_types');
+    final list = uid != null ? await query.select().eq('user_id', uid) : await query.select();
+    if (mounted) {
+      setState(() {
+        _cachedTypes = (list as List).cast<Map<String, dynamic>>();
+        if (_selectedType == null && _cachedTypes.isNotEmpty) {
+          _selectedType = (_cachedTypes.first['title'] as String?) ?? (_cachedTypes.first['value'] as String?);
+        }
+      });
+    }
   }
 }

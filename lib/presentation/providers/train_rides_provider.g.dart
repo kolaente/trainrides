@@ -471,5 +471,25 @@ class _TrainRideSearchNotifierProviderElement
   String get query => (origin as TrainRideSearchNotifierProvider).query;
 }
 
+String _$rideTypesNotifierHash() => r'30761b6f75d6a0ea4cd7a2adc6223620b5953a3a';
+
+/// See also [RideTypesNotifier].
+@ProviderFor(RideTypesNotifier)
+final rideTypesNotifierProvider =
+    AutoDisposeAsyncNotifierProvider<
+      RideTypesNotifier,
+      List<Map<String, dynamic>>
+    >.internal(
+      RideTypesNotifier.new,
+      name: r'rideTypesNotifierProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$rideTypesNotifierHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+typedef _$RideTypesNotifier =
+    AutoDisposeAsyncNotifier<List<Map<String, dynamic>>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

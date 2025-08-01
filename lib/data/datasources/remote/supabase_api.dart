@@ -38,4 +38,16 @@ class SupabaseApi {
   Future<void> deleteRide(int id) async {
     await client.from('rides').delete().eq('id', id);
   }
+
+  Future<void> addRideType(Map<String, dynamic> rideType) async {
+    await client.from('ride_types').insert(rideType);
+  }
+
+  Future<void> updateRideType(int id, Map<String, dynamic> patch) async {
+    await client.from('ride_types').update(patch).eq('id', id);
+  }
+
+  Future<void> deleteRideType(int id) async {
+    await client.from('ride_types').delete().eq('id', id);
+  }
 }
