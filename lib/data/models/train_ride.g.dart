@@ -11,21 +11,21 @@ TrainRide _$TrainRideFromJson(Map<String, dynamic> json) => TrainRide(
   from: json['from'] as String,
   to: json['to'] as String,
   price: (json['price'] as num).toDouble(),
-  type: json['type'] as String,
+  typeId: (json['type_id'] as num?)?.toInt(),
   date: DateTime.parse(json['date'] as String),
   details: json['details'] as String?,
-  createdAt: DateTime.parse(json['createdAt'] as String),
-  updatedAt: DateTime.parse(json['updatedAt'] as String),
+  createdAt: DateTime.parse(json['created_at'] as String),
+  userId: json['user_id'] as String?,
 );
 
 Map<String, dynamic> _$TrainRideToJson(TrainRide instance) => <String, dynamic>{
-  'id': instance.id,
+  if (instance.id case final value?) 'id': value,
   'from': instance.from,
   'to': instance.to,
   'price': instance.price,
-  'type': instance.type,
+  'type_id': instance.typeId,
   'date': instance.date.toIso8601String(),
   'details': instance.details,
-  'createdAt': instance.createdAt.toIso8601String(),
-  'updatedAt': instance.updatedAt.toIso8601String(),
+  'created_at': instance.createdAt.toIso8601String(),
+  'user_id': instance.userId,
 };

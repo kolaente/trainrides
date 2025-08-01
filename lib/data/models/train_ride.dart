@@ -5,26 +5,32 @@ part 'train_ride.g.dart';
 
 @JsonSerializable()
 class TrainRide {
+  @JsonKey(includeIfNull: false)
   final int? id;
+  @JsonKey(name: 'from')
   final String from;
+  @JsonKey(name: 'to')
   final String to;
   final double price;
-  final String type;
+  @JsonKey(name: 'type_id')
+  final int? typeId;
   final DateTime date;
   final String? details;
+  @JsonKey(name: 'created_at')
   final DateTime createdAt;
-  final DateTime updatedAt;
+  @JsonKey(name: 'user_id')
+  final String? userId;
 
   const TrainRide({
     this.id,
     required this.from,
     required this.to,
     required this.price,
-    required this.type,
+    this.typeId,
     required this.date,
     this.details,
     required this.createdAt,
-    required this.updatedAt,
+    this.userId,
   });
 
   factory TrainRide.fromJson(Map<String, dynamic> json) =>
@@ -88,17 +94,15 @@ class TrainRide {
       from: _parseStringValue(json[ApiConstants.fieldMapping['from']!]),
       to: _parseStringValue(json[ApiConstants.fieldMapping['to']!]),
       price: parsedPrice,
-      type: _parseStringValue(json[ApiConstants.fieldMapping['type']!]),
+      typeId: null,
       date: DateTime.parse(
         dateString.isNotEmpty ? dateString : DateTime.now().toIso8601String(),
       ),
       details: detailsString.isNotEmpty ? detailsString : null,
       createdAt: DateTime.parse(
-        json['created_on'] ?? DateTime.now().toIso8601String(),
+        json['created_at'] ?? DateTime.now().toIso8601String(),
       ),
-      updatedAt: DateTime.parse(
-        json['updated_on'] ?? DateTime.now().toIso8601String(),
-      ),
+      userId: json['user_id'] as String?,
     );
   }
 
@@ -113,31 +117,26 @@ class TrainRide {
       from: _parseStringValue(json['from']),
       to: _parseStringValue(json['to']),
       price: parsedPrice,
-      type: _parseStringValue(json['type']),
+      typeId: json['type_id'] as int?,
       date: DateTime.parse(
         dateString.isNotEmpty ? dateString : DateTime.now().toIso8601String(),
       ),
       details: detailsString.isNotEmpty ? detailsString : null,
       createdAt: DateTime.parse(
-        json['created_on'] ?? DateTime.now().toIso8601String(),
+        json['created_at'] ?? DateTime.now().toIso8601String(),
       ),
-      updatedAt: DateTime.parse(
-        json['updated_on'] ?? DateTime.now().toIso8601String(),
-      ),
+      userId: json['user_id'] as String?,
     );
   }
 
   Map<String, dynamic> toBaserowJson() {
     final result = {
-      ApiConstants.fieldMapping['from']!: from,
-      ApiConstants.fieldMapping['to']!: to,
-      ApiConstants.fieldMapping['price']!: price,
-      ApiConstants.fieldMapping['type']!: type,
-      ApiConstants.fieldMapping['date']!: date
-          .toIso8601String()
-          .split('T')
-          .first,
-      if (details != null) ApiConstants.fieldMapping['details']!: details,
+      'from': from,
+      'to': to,
+      'price': price,
+      if (typeId != null) 'type_id': typeId,
+      'date': date.toIso8601String().split('T').first,
+      if (details != null) 'details': details,
     };
 
     return result;
@@ -148,22 +147,22 @@ class TrainRide {
     String? from,
     String? to,
     double? price,
-    String? type,
+    int? typeId,
     DateTime? date,
     String? details,
     DateTime? createdAt,
-    DateTime? updatedAt,
+    String? userId,
   }) {
     return TrainRide(
       id: id ?? this.id,
       from: from ?? this.from,
       to: to ?? this.to,
       price: price ?? this.price,
-      type: type ?? this.type,
+      typeId: typeId ?? this.typeId,
       date: date ?? this.date,
       details: details ?? this.details,
       createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
+      userId: userId ?? this.userId,
     );
   }
 
@@ -175,11 +174,11 @@ class TrainRide {
         other.from == from &&
         other.to == to &&
         other.price == price &&
-        other.type == type &&
+        other.typeId == typeId &&
         other.date == date &&
         other.details == details &&
         other.createdAt == createdAt &&
-        other.updatedAt == updatedAt;
+        other.userId == userId;
   }
 
   @override
@@ -189,17 +188,17 @@ class TrainRide {
       from,
       to,
       price,
-      type,
+      typeId,
       date,
       details,
       createdAt,
-      updatedAt,
+      userId,
     );
   }
 
   @override
   String toString() {
-    return 'TrainRide(id: $id, from: $from, to: $to, price: $price, type: $type, date: $date, details: $details, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'TrainRide(id: $id, from: $from, to: $to, price: $price, typeId: $typeId, date: $date, details: $details, createdAt: $createdAt, userId: $userId)';
   }
 
   String get displayTitle => '$from → $to';

@@ -23,6 +23,23 @@ final supabaseApiProvider = AutoDisposeProvider<SupabaseApi>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef SupabaseApiRef = AutoDisposeProviderRef<SupabaseApi>;
+String _$rideTypeTitlesHash() => r'ee7295b792a0e14f05defbb7789eab54a6eb7a78';
+
+/// See also [rideTypeTitles].
+@ProviderFor(rideTypeTitles)
+final rideTypeTitlesProvider = AutoDisposeProvider<List<String>>.internal(
+  rideTypeTitles,
+  name: r'rideTypeTitlesProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$rideTypeTitlesHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef RideTypeTitlesRef = AutoDisposeProviderRef<List<String>>;
 String _$trainRidesByDateRangeHash() =>
     r'7ecc1dd631be0333781546a747cb94bdb77e6881';
 
@@ -304,7 +321,7 @@ class _TrainRideByIdProviderElement
 }
 
 String _$trainRidesNotifierHash() =>
-    r'40c7464ce08f65cb66d7f2dfccf66516b14fecea';
+    r'f3e21c018a8054012ec3638b73e200b2c2f2db07';
 
 /// See also [TrainRidesNotifier].
 @ProviderFor(TrainRidesNotifier)

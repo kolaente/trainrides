@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/train_rides_provider.dart';
 import '../../../data/models/train_ride.dart' as model;
 import '../../../core/utils/date_utils.dart' as date_utils;
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AddRideScreen extends ConsumerStatefulWidget {
   final model.TrainRide? ride;
@@ -24,9 +23,9 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
   DateTime _selectedDate = DateTime.now();
   String? _selectedType;
   bool _isLoading = false;
-  List<Map<String, dynamic>> _cachedTypes = const [];
+  List<String> _cachedTypes = const [];
 
-  List<Map<String, dynamic>> get _typeOptions => _cachedTypes;
+  List<String> get _typeOptions => _cachedTypes;
 
   @override
   void initState() {
@@ -37,11 +36,7 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
       _priceController.text = widget.ride!.price.toStringAsFixed(2);
       _detailsController.text = widget.ride!.details ?? '';
       _selectedDate = widget.ride!.date;
-      _selectedType = widget.ride!.type;
-    } else {
-      if (_typeOptions.isNotEmpty) {
-        _selectedType = (_typeOptions.first['title'] as String?) ?? (_typeOptions.first['value'] as String?);
-      }
+      _selectedType = null;
     }
   }
 
@@ -85,13 +80,12 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
         from: _fromController.text.trim(),
         to: _toController.text.trim(),
         price: parsedPrice,
-        type: _selectedType!,
+        typeId: null,
         date: _selectedDate,
         details: _detailsController.text.trim().isEmpty
             ? null
             : _detailsController.text.trim(),
         createdAt: widget.ride?.createdAt ?? now,
-        updatedAt: now,
       );
 
       if (widget.ride == null) {
@@ -133,6 +127,7 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _loadTypes();
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.ride == null ? 'Add Train Ride' : 'Edit Train Ride'),
@@ -210,8 +205,7 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
                       labelText: 'Type',
                       prefixIcon: Icon(Icons.train),
                     ),
-                    items: _typeOptions.map<DropdownMenuItem<String>>((option) {
-                      final title = (option['title'] as String?) ?? (option['value'] as String?) ?? '';
+                    items: _typeOptions.map<DropdownMenuItem<String>>((title) {
                       return DropdownMenuItem<String>(
                         value: title,
                         child: Text(
@@ -276,15 +270,28 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
     );
   }
 
-  Future<void> _loadTypes() async {
-    final uid = Supabase.instance.client.auth.currentUser?.id;
-    final query = Supabase.instance.client.from('ride_types');
-    final list = uid != null ? await query.select().eq('user_id', uid) : await query.select();
-    if (mounted) {
-      setState(() {
-        _cachedTypes = (list as List).cast<Map<String, dynamic>>();
-        if (_selectedType == null && _cachedTypes.isNotEmpty) {
-          _selectedType = (_cachedTypes.first['title'] as String?) ?? (_cachedTypes.first['value'] as String?);
+  void _loadTypes() {
+    final rideTypesAsync = ref.watch(rideTypesNotifierProvider);
+    final titles = rideTypesAsync.when(
+      data: (types) => types
+          .map((e) => (e['title'] as String?) ?? '')
+          .where((s) => s.isNotEmpty)
+          .toList()
+          ..sort(),
+      loading: () => const <String>[],
+      error: (_, __) => const <String>[],
+    );
+    
+    if (_cachedTypes.length != titles.length || 
+        !_cachedTypes.every((element) => titles.contains(element))) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            _cachedTypes = List<String>.from(titles);
+            if (_selectedType == null && _cachedTypes.isNotEmpty) {
+              _selectedType = _cachedTypes.first;
+            }
+          });
         }
       });
     }

@@ -428,7 +428,7 @@ class TrainRideListItem extends StatelessWidget {
               const SizedBox(height: 8),
               Row(
                 children: [
-                  TypeLabel(type: ride.type),
+                  const SizedBox.shrink(),
                   const SizedBox(width: 8),
                   Text(
                     ride.displayPrice,

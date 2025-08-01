@@ -23,18 +23,19 @@ class RideBottomSheet extends ConsumerStatefulWidget {
 }
 
 class _RideBottomSheetState extends ConsumerState<RideBottomSheet> {
-  late TrainRide _currentRide;
   final double propertyPadding = 12.0;
-
-  @override
-  void initState() {
-    super.initState();
-    _currentRide = widget.ride;
-  }
 
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    
+    // Watch the current ride from the provider to get real-time updates
+    final rideAsync = ref.watch(trainRideByIdProvider(widget.ride.id!));
+    final currentRide = rideAsync.when(
+      data: (ride) => ride ?? widget.ride,
+      loading: () => widget.ride,
+      error: (_, __) => widget.ride,
+    );
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.5,
       child: Padding(
@@ -68,7 +69,7 @@ class _RideBottomSheetState extends ConsumerState<RideBottomSheet> {
                       children: [
                         Expanded(
                           child: Text(
-                            _currentRide.displayTitle,
+                            currentRide.displayTitle,
                             style: theme.textTheme.headlineMedium?.copyWith(
                               fontWeight: FontWeight.w600,
                             ),
@@ -82,13 +83,10 @@ class _RideBottomSheetState extends ConsumerState<RideBottomSheet> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        AddRideScreen(ride: _currentRide),
+                                        AddRideScreen(ride: currentRide),
                                   ),
                                 );
                                 if (result != null) {
-                                  setState(() {
-                                    _currentRide = result;
-                                  });
                                   widget.onEdit?.call();
                                 }
                               },
@@ -110,14 +108,14 @@ class _RideBottomSheetState extends ConsumerState<RideBottomSheet> {
                       children: [
                         Text(
                           date_utils.DateUtils.formatForDisplay(
-                            _currentRide.date,
+                            currentRide.date,
                           ),
                           style: theme.textTheme.titleMedium?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
                         ),
                         SizedBox(width: 12),
-                        TypeLabel(type: _currentRide.type),
+                        const SizedBox.shrink(),
                         Spacer(),
                         Container(
                           padding: EdgeInsets.symmetric(
@@ -138,7 +136,7 @@ class _RideBottomSheetState extends ConsumerState<RideBottomSheet> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                _currentRide.displayPrice,
+                                currentRide.displayPrice,
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   color: theme.colorScheme.onPrimaryContainer,
                                   fontWeight: FontWeight.w600,
@@ -150,8 +148,8 @@ class _RideBottomSheetState extends ConsumerState<RideBottomSheet> {
                       ],
                     ),
 
-                    if (_currentRide.details != null &&
-                        _currentRide.details!.isNotEmpty) ...[
+                    if (currentRide.details != null &&
+                        currentRide.details!.isNotEmpty) ...[
                       SizedBox(height: propertyPadding),
                       Container(
                         width: double.infinity,
@@ -163,7 +161,7 @@ class _RideBottomSheetState extends ConsumerState<RideBottomSheet> {
                         child: Padding(
                           padding: const EdgeInsets.all(10),
                           child: Text(
-                            _currentRide.details!,
+                            currentRide.details!,
                             style: theme.textTheme.bodyMedium,
                           ),
                         ),
@@ -182,7 +180,7 @@ class _RideBottomSheetState extends ConsumerState<RideBottomSheet> {
                     Icons.access_time,
                     'Created',
                     date_utils.DateUtils.formatDateTimeForDisplay(
-                      _currentRide.createdAt,
+                      currentRide.createdAt,
                     ),
                   ),
                 ),
@@ -192,9 +190,7 @@ class _RideBottomSheetState extends ConsumerState<RideBottomSheet> {
                     context,
                     Icons.update,
                     'Updated',
-                    date_utils.DateUtils.formatDateTimeForDisplay(
-                      _currentRide.updatedAt,
-                    ),
+                    '',
                   ),
                 ),
               ],
@@ -313,7 +309,7 @@ class _RideBottomSheetState extends ConsumerState<RideBottomSheet> {
       try {
         await ref
             .read(trainRidesNotifierProvider.notifier)
-            .deleteTrainRide(_currentRide.id!);
+            .deleteTrainRide(widget.ride.id!);
 
         if (context.mounted) {
           Navigator.of(context).pop(); // Close bottom sheet

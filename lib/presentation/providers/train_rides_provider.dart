@@ -25,7 +25,15 @@ class TrainRidesNotifier extends _$TrainRidesNotifier {
   Future<void> addTrainRide(model.TrainRide ride) async {
     try {
       final api = ref.read(supabaseApiProvider);
-      await api.addRide(ride.toJson());
+      final currentUser = api.client.auth.currentUser;
+      
+      if (currentUser == null) {
+        throw Exception('You must be signed in to add train rides. Please sign in and try again.');
+      }
+      
+      // Ensure the ride includes the current user's ID
+      final rideWithUserId = ride.copyWith(userId: currentUser.id);
+      await api.addRide(rideWithUserId.toJson());
       ref.invalidateSelf();
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
@@ -35,13 +43,21 @@ class TrainRidesNotifier extends _$TrainRidesNotifier {
   Future<void> updateTrainRide(model.TrainRide ride) async {
     try {
       final api = ref.read(supabaseApiProvider);
+      final currentUser = api.client.auth.currentUser;
+      
+      if (currentUser == null) {
+        throw Exception('You must be signed in to update train rides. Please sign in and try again.');
+      }
+      
+      if (ride.id == null) {
+        throw Exception('Cannot update ride without an ID.');
+      }
+      
       await api.updateRide(ride.id!, ride.toJson());
       ref.invalidateSelf();
 
       // Invalidate the individual ride cache
-      if (ride.id != null) {
-        ref.invalidate(trainRideByIdProvider(ride.id!));
-      }
+      ref.invalidate(trainRideByIdProvider(ride.id!));
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
@@ -50,6 +66,12 @@ class TrainRidesNotifier extends _$TrainRidesNotifier {
   Future<void> deleteTrainRide(int id) async {
     try {
       final api = ref.read(supabaseApiProvider);
+      final currentUser = api.client.auth.currentUser;
+      
+      if (currentUser == null) {
+        throw Exception('You must be signed in to delete train rides. Please sign in and try again.');
+      }
+      
       await api.deleteRide(id);
       ref.invalidateSelf();
 
@@ -59,6 +81,21 @@ class TrainRidesNotifier extends _$TrainRidesNotifier {
       state = AsyncValue.error(error, stackTrace);
     }
   }
+}
+
+
+@riverpod
+List<String> rideTypeTitles(RideTypeTitlesRef ref) {
+  final types = ref.watch(rideTypesNotifierProvider);
+  return types.when(
+    data: (list) => list
+        .map((e) => (e['title'] as String?) ?? (e['value'] as String?) ?? '')
+        .where((s) => s.isNotEmpty)
+        .toSet()
+        .toList(),
+    loading: () => const [],
+    error: (_, __) => const [],
+  );
 }
 
 @riverpod
@@ -117,6 +154,7 @@ class TrainRideSearchNotifier extends _$TrainRideSearchNotifier {
   }
 }
 
+
 @riverpod
 Future<List<model.TrainRide>> trainRidesByDateRange(
   TrainRidesByDateRangeRef ref,
@@ -152,6 +190,7 @@ Future<model.TrainRide?> trainRideById(TrainRideByIdRef ref, int id) async {
     return null;
   }
 }
+
 
 @riverpod
 class RideTypesNotifier extends _$RideTypesNotifier {
@@ -202,3 +241,4 @@ class RideTypesNotifier extends _$RideTypesNotifier {
     }
   }
 }
+

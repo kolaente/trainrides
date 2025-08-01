@@ -152,7 +152,7 @@ class BaserowApi {
         'from': trainRide.from,
         'to': trainRide.to,
         'price': trainRide.price.toString(),
-        'type': trainRide.type,
+        'type_id': trainRide.typeId, 
         'date': trainRide.date.toIso8601String().split('T').first,
         if (trainRide.details != null) 'details': trainRide.details,
       };
