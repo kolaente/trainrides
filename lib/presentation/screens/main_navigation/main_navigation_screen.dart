@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../home/home_screen.dart';
 import '../statistics/statistics_screen.dart';
 import '../add_ride/add_ride_screen.dart';
+import '../db_lounges/db_lounges_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -13,7 +14,11 @@ class MainNavigationScreen extends StatefulWidget {
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _selectedIndex = 0;
 
-  static const List<Widget> _screens = [HomeScreen(), StatisticsScreen()];
+  static const List<Widget> _screens = [
+    HomeScreen(),
+    StatisticsScreen(),
+    DbLoungesScreen(),
+  ];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -51,6 +56,11 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             icon: Icon(Icons.bar_chart_outlined),
             selectedIcon: Icon(Icons.bar_chart),
             label: 'Statistics',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.restaurant_outlined),
+            selectedIcon: Icon(Icons.restaurant),
+            label: 'Lounges',
           ),
         ],
       ),

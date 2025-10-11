@@ -1,5 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/train_ride.dart';
+import '../../models/db_lounge.dart';
+import '../../models/db_lounge_visit.dart';
 
 class SupabaseApi {
   final SupabaseClient client;
@@ -95,5 +97,72 @@ class SupabaseApi {
 
   Future<void> deleteRideType(int id) async {
     await client.from('ride_types').delete().eq('id', id);
+  }
+
+  // DB Lounge methods
+  Future<List<DbLounge>> fetchDbLounges() async {
+    final rows = await client
+        .from('db_lounges')
+        .select()
+        .order('location', ascending: true);
+    final list = rows.cast<Map<String, dynamic>>();
+    return list.map((e) => DbLounge.fromJson(e)).toList();
+  }
+
+  Future<List<DbLoungeVisit>> fetchDbLoungeVisits() async {
+    final userId = client.auth.currentUser?.id;
+    if (userId == null) return [];
+
+    final rows = await client
+        .from('db_lounge_visits')
+        .select()
+        .eq('user_id', userId)
+        .order('visited_at', ascending: false);
+    final list = rows.cast<Map<String, dynamic>>();
+    return list.map((e) => DbLoungeVisit.fromJson(e)).toList();
+  }
+
+  Future<int> getDbLoungeVisitCount(int loungeId) async {
+    final userId = client.auth.currentUser?.id;
+    if (userId == null) return 0;
+
+    final response = await client
+        .from('db_lounge_visits')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('db_lounge_id', loungeId);
+
+    return response.length;
+  }
+
+  Future<Map<int, int>> getAllDbLoungeVisitCounts() async {
+    final userId = client.auth.currentUser?.id;
+    if (userId == null) return {};
+
+    final response = await client
+        .from('db_lounge_visits')
+        .select('db_lounge_id')
+        .eq('user_id', userId);
+
+    final Map<int, int> counts = {};
+    for (final row in response) {
+      final loungeId = row['db_lounge_id'] as int;
+      counts[loungeId] = (counts[loungeId] ?? 0) + 1;
+    }
+
+    return counts;
+  }
+
+  Future<void> addDbLoungeVisit(int loungeId, {DateTime? visitedAt}) async {
+    final userId = client.auth.currentUser?.id;
+    if (userId == null) {
+      throw Exception('User not authenticated. Please sign in to add visits.');
+    }
+
+    await client.from('db_lounge_visits').insert({
+      'db_lounge_id': loungeId,
+      'user_id': userId,
+      'visited_at': (visitedAt ?? DateTime.now()).toIso8601String(),
+    });
   }
 }
