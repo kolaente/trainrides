@@ -9,7 +9,11 @@ class SupabaseApi {
     final userId = client.auth.currentUser?.id;
     if (userId == null) return [];
 
-    final rows = await client.from('rides').select().eq('user_id', userId);
+    final rows = await client
+        .from('rides')
+        .select()
+        .eq('user_id', userId)
+        .order('date', ascending: false);
     final list = rows.cast<Map<String, dynamic>>();
     return list.map((e) => TrainRide.fromJson(e)).toList();
   }
@@ -34,7 +38,7 @@ class SupabaseApi {
   Future<List<Map<String, dynamic>>> fetchRideTypes() async {
     final userId = client.auth.currentUser?.id;
     if (userId == null) return [];
-    
+
     final rows = await client.from('ride_types').select().eq('user_id', userId);
     return rows.cast<Map<String, dynamic>>();
   }
