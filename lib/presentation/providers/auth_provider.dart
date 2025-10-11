@@ -1,6 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../core/errors/exceptions.dart';
 
 part 'auth_provider.g.dart';
 
@@ -31,11 +30,10 @@ class AuthState {
       session = null,
       error = null;
 
-  const AuthState.error(String error)
+  const AuthState.error(this.error)
     : status = AuthStatus.error,
       token = null,
-      session = null,
-      error = error;
+      session = null;
 
   AuthState copyWith({
     AuthStatus? status,
