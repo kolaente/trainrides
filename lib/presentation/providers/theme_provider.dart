@@ -42,16 +42,9 @@ class ThemeNotifier extends _$ThemeNotifier {
 
 class AppTheme {
   // Vibrant gradient color palette
-  static const Color _color1 = Color(0xFFf72585); // Pink
   static const Color _color2 = Color(0xFFb5179e); // Purple pink
-  static const Color _color3 = Color(0xFF7209b7); // Purple
-  static const Color _color4 = Color(0xFF560bad); // Dark purple
   static const Color _color5 = Color(0xFF480ca8); // Darker purple
-  static const Color _color6 = Color(0xFF3a0ca3); // Deep purple
-  static const Color _color7 = Color(0xFF3f37c9); // Blue purple
   static const Color _color8 = Color(0xFF4361ee); // Blue
-  static const Color _color9 = Color(0xFF4895ef); // Light blue
-  static const Color _color10 = Color(0xFF4cc9f0); // Cyan
 
   static const Map<String, Color> typeColors = {
     'dark-blue': Color(0xFF1E3A8A),
@@ -114,7 +107,7 @@ class AppTheme {
             secondary: _color5,
             tertiary: _color2,
             surface: const Color(0xFFFAFAFA),
-            surfaceVariant: const Color(0xFFF5F5F5),
+            surfaceContainerHighest: const Color(0xFFF5F5F5),
           ),
       appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
       cardTheme: CardThemeData(
@@ -156,7 +149,7 @@ class AppTheme {
             secondary: _color5,
             tertiary: _color2,
             surface: const Color(0xFF1A1A1A),
-            surfaceVariant: const Color(0xFF2D2D2D),
+            surfaceContainerHighest: const Color(0xFF2D2D2D),
           ),
       appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
       cardTheme: CardThemeData(
