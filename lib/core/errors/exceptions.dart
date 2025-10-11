@@ -10,43 +10,39 @@ class AppException implements Exception {
 }
 
 class NetworkException extends AppException {
-  const NetworkException(String message, {String? code, dynamic originalError})
-    : super(message, code: code, originalError: originalError);
+  const NetworkException(super.message, {super.code, super.originalError});
 }
 
 class ApiException extends AppException {
   final int? statusCode;
 
   const ApiException(
-    String message, {
+    super.message, {
     this.statusCode,
-    String? code,
-    dynamic originalError,
-  }) : super(message, code: code, originalError: originalError);
+    super.code,
+    super.originalError,
+  });
 }
 
 class AuthException extends AppException {
-  const AuthException(String message, {String? code, dynamic originalError})
-    : super(message, code: code, originalError: originalError);
+  const AuthException(super.message, {super.code, super.originalError});
 }
 
 class DatabaseException extends AppException {
-  const DatabaseException(String message, {String? code, dynamic originalError})
-    : super(message, code: code, originalError: originalError);
+  const DatabaseException(super.message, {super.code, super.originalError});
 }
 
 class SyncException extends AppException {
-  const SyncException(String message, {String? code, dynamic originalError})
-    : super(message, code: code, originalError: originalError);
+  const SyncException(super.message, {super.code, super.originalError});
 }
 
 class ValidationException extends AppException {
   final Map<String, String>? fieldErrors;
 
   const ValidationException(
-    String message, {
+    super.message, {
     this.fieldErrors,
-    String? code,
-    dynamic originalError,
-  }) : super(message, code: code, originalError: originalError);
+    super.code,
+    super.originalError,
+  });
 }
