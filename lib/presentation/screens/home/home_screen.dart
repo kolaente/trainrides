@@ -33,21 +33,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       appBar: AppBar(
         title: const Text('Train Rides'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.category_outlined),
-            tooltip: 'Ride types',
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const RideTypesScreen(),
-                ),
-              );
-            },
-          ),
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert),
             onSelected: (value) async {
               switch (value) {
+                case 'types':
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const RideTypesScreen(),
+                    ),
+                  );
+                  break;
                 case 'theme':
                   await _showThemeDialog(context);
                   break;
@@ -60,6 +56,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               }
             },
             itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'types',
+                child: ListTile(
+                  leading: Icon(Icons.category_outlined),
+                  title: Text('Ride Types'),
+                ),
+              ),
               const PopupMenuItem(
                 value: 'theme',
                 child: ListTile(
@@ -432,13 +435,18 @@ class TrainRideListItem extends StatelessWidget {
                     builder: (context, ref, _) {
                       final type = ref.watch(rideTypeByIdProvider(ride.typeId));
                       if (type == null) return const SizedBox.shrink();
-                      final title = (type['title'] as String?) ?? (type['value'] as String?) ?? '';
+                      final title =
+                          (type['title'] as String?) ??
+                          (type['value'] as String?) ??
+                          '';
                       if (title.isEmpty) return const SizedBox.shrink();
-                      
+
                       // Parse color from database
                       final colorHex = type['color'] as String?;
-                      final typeColor = colorHex != null ? AppTheme.parseColor(colorHex) : null;
-                      
+                      final typeColor = colorHex != null
+                          ? AppTheme.parseColor(colorHex)
+                          : null;
+
                       return TypeLabel(type: title, color: typeColor);
                     },
                   ),
