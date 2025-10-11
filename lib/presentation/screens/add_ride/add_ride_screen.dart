@@ -303,9 +303,11 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
         if (mounted) {
           setState(() {
             _cachedTypes = List<String>.from(titles);
-            
+
             // For editing existing rides, find the type title from typeId
-            if (widget.ride != null && widget.ride!.typeId != null && _selectedType == null) {
+            if (widget.ride != null &&
+                widget.ride!.typeId != null &&
+                _selectedType == null) {
               rideTypesAsync.when(
                 data: (types) {
                   final matchingType = types.firstWhere(
@@ -321,7 +323,7 @@ class _AddRideScreenState extends ConsumerState<AddRideScreen> {
                 error: (_, __) {},
               );
             }
-            
+
             // For new rides, default to first type if none selected
             if (_selectedType == null && _cachedTypes.isNotEmpty) {
               _selectedType = _cachedTypes.first;

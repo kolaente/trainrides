@@ -118,15 +118,22 @@ class _RideBottomSheetState extends ConsumerState<RideBottomSheet> {
                         SizedBox(width: 12),
                         Consumer(
                           builder: (context, ref, _) {
-                            final type = ref.watch(rideTypeByIdProvider(currentRide.typeId));
+                            final type = ref.watch(
+                              rideTypeByIdProvider(currentRide.typeId),
+                            );
                             if (type == null) return const SizedBox.shrink();
-                            final title = (type['title'] as String?) ?? (type['value'] as String?) ?? '';
+                            final title =
+                                (type['title'] as String?) ??
+                                (type['value'] as String?) ??
+                                '';
                             if (title.isEmpty) return const SizedBox.shrink();
-                            
+
                             // Parse color from database
                             final colorHex = type['color'] as String?;
-                            final typeColor = colorHex != null ? AppTheme.parseColor(colorHex) : null;
-                            
+                            final typeColor = colorHex != null
+                                ? AppTheme.parseColor(colorHex)
+                                : null;
+
                             return TypeLabel(type: title, color: typeColor);
                           },
                         ),
