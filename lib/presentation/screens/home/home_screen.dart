@@ -229,7 +229,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               await ref.read(trainRidesNotifierProvider.notifier).refresh();
             },
             child: ListView.builder(
-              itemCount: trainRides.length + 1,
+              itemCount: trainRides.length,
               itemBuilder: (context, index) {
                 final ride = trainRides[index];
                 return TrainRideListItem(
