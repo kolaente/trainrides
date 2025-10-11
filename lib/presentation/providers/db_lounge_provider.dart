@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/db_lounge.dart';
 import '../../data/models/db_lounge_visit.dart';
 import 'train_rides_provider.dart';
@@ -47,13 +48,13 @@ class DbLoungeVisitsNotifier extends _$DbLoungeVisitsNotifier {
 }
 
 @riverpod
-Future<int> dbLoungeVisitCount(DbLoungeVisitCountRef ref, int loungeId) async {
+Future<int> dbLoungeVisitCount(Ref ref, int loungeId) async {
   final api = ref.read(supabaseApiProvider);
   return await api.getDbLoungeVisitCount(loungeId);
 }
 
 @riverpod
-Future<Map<int, int>> dbLoungeVisitCounts(DbLoungeVisitCountsRef ref) async {
+Future<Map<int, int>> dbLoungeVisitCounts(Ref ref) async {
   final api = ref.read(supabaseApiProvider);
   return await api.getAllDbLoungeVisitCounts();
 }

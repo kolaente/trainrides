@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../data/models/train_ride.dart' as model;
 import '../../data/datasources/remote/supabase_api.dart';
@@ -6,7 +7,7 @@ import '../../data/datasources/remote/supabase_api.dart';
 part 'train_rides_provider.g.dart';
 
 @riverpod
-SupabaseApi supabaseApi(SupabaseApiRef ref) {
+SupabaseApi supabaseApi(Ref ref) {
   return SupabaseApi(Supabase.instance.client);
 }
 
@@ -90,7 +91,7 @@ class TrainRidesNotifier extends _$TrainRidesNotifier {
 }
 
 @riverpod
-List<String> rideTypeTitles(RideTypeTitlesRef ref) {
+List<String> rideTypeTitles(Ref ref) {
   final types = ref.watch(rideTypesNotifierProvider);
   return types.when(
     data: (list) => list
@@ -104,7 +105,7 @@ List<String> rideTypeTitles(RideTypeTitlesRef ref) {
 }
 
 @riverpod
-Map<String, dynamic>? rideTypeById(RideTypeByIdRef ref, int? typeId) {
+Map<String, dynamic>? rideTypeById(Ref ref, int? typeId) {
   if (typeId == null) return null;
   final types = ref.watch(rideTypesNotifierProvider);
   return types.when<Map<String, dynamic>?>(
@@ -177,7 +178,7 @@ class TrainRideSearchNotifier extends _$TrainRideSearchNotifier {
 
 @riverpod
 Future<List<model.TrainRide>> trainRidesByDateRange(
-  TrainRidesByDateRangeRef ref,
+  Ref ref,
   DateTime start,
   DateTime end,
 ) async {
@@ -196,7 +197,7 @@ Future<List<model.TrainRide>> trainRidesByDateRange(
 }
 
 @riverpod
-Future<model.TrainRide?> trainRideById(TrainRideByIdRef ref, int id) async {
+Future<model.TrainRide?> trainRideById(Ref ref, int id) async {
   final api = ref.read(supabaseApiProvider);
 
   try {
