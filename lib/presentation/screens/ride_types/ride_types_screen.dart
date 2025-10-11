@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flex_color_picker/flex_color_picker.dart';
 import '../../providers/train_rides_provider.dart';
 import '../../providers/theme_provider.dart';
 
@@ -14,7 +15,9 @@ class RideTypesScreen extends ConsumerWidget {
     final titleCtrl = TextEditingController(
       text: initial?['title'] as String? ?? '',
     );
-    Color picked = AppTheme.parseColor(initial?['color'] as String? ?? '#4895ef');
+    Color picked = AppTheme.parseColor(
+      initial?['color'] as String? ?? '#4895ef',
+    );
 
     final ok = await showDialog<bool>(
       context: context,
@@ -35,12 +38,30 @@ class RideTypesScreen extends ConsumerWidget {
                   const SizedBox(width: 12),
                   GestureDetector(
                     onTap: () async {
-                      final res = await showDialog<Color?>(
-                        context: ctx,
-                        builder: (_) =>
-                            _ColorPickerDialog(initialColor: picked),
+                      final res = await showColorPickerDialog(
+                        ctx,
+                        picked,
+                        title: Text('Pick a color'),
+                        width: 40,
+                        height: 40,
+                        borderRadius: 4,
+                        pickersEnabled: const <ColorPickerType, bool>{
+                          ColorPickerType.both: true,
+                          ColorPickerType.primary: false,
+                          ColorPickerType.accent: false,
+                          ColorPickerType.bw: false,
+                          ColorPickerType.custom: false,
+                          ColorPickerType.wheel: true,
+                        },
+                        enableShadesSelection: true,
+                        enableTonalPalette: true,
+                        showColorCode: true,
+                        colorCodeHasColor: true,
+                        showColorName: false,
+                        showRecentColors: true,
+                        maxRecentColors: 16,
                       );
-                      if (res != null) setLocalState(() => picked = res);
+                      if (res != picked) setLocalState(() => picked = res);
                     },
                     child: Container(
                       width: 36,
@@ -76,7 +97,7 @@ class RideTypesScreen extends ConsumerWidget {
     if (title.isEmpty) return;
 
     final colorHex =
-        '#${picked.value.toRadixString(16).padLeft(8, '0').substring(2)}';
+        '#${picked.toARGB32().toRadixString(16).padLeft(8, '0').substring(2)}';
 
     final notifier = ref.read(rideTypesNotifierProvider.notifier);
 
@@ -175,88 +196,6 @@ class RideTypesScreen extends ConsumerWidget {
         onPressed: () => _addOrEdit(context, ref),
         child: const Icon(Icons.add),
       ),
-    );
-  }
-
-}
-
-class _ColorPickerDialog extends StatefulWidget {
-  final Color initialColor;
-  const _ColorPickerDialog({required this.initialColor});
-
-  @override
-  State<_ColorPickerDialog> createState() => _ColorPickerDialogState();
-}
-
-class _ColorPickerDialogState extends State<_ColorPickerDialog> {
-  late double _r;
-  late double _g;
-  late double _b;
-
-  @override
-  void initState() {
-    super.initState();
-    _r = widget.initialColor.red.toDouble();
-    _g = widget.initialColor.green.toDouble();
-    _b = widget.initialColor.blue.toDouble();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final color = Color.fromARGB(255, _r.toInt(), _g.toInt(), _b.toInt());
-    return AlertDialog(
-      title: const Text('Pick a color'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: double.infinity,
-            height: 40,
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: Colors.black12),
-            ),
-          ),
-          const SizedBox(height: 12),
-          _slider('R', _r, (v) => setState(() => _r = v), Colors.red),
-          _slider('G', _g, (v) => setState(() => _g = v), Colors.green),
-          _slider('B', _b, (v) => setState(() => _b = v), Colors.blue),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
-        ),
-        FilledButton(
-          onPressed: () => Navigator.pop(context, color),
-          child: const Text('Use'),
-        ),
-      ],
-    );
-  }
-
-  Widget _slider(
-    String label,
-    double value,
-    ValueChanged<double> onChanged,
-    Color active,
-  ) {
-    return Row(
-      children: [
-        SizedBox(width: 20, child: Text(label)),
-        Expanded(
-          child: Slider(
-            min: 0,
-            max: 255,
-            divisions: 255,
-            value: value,
-            onChanged: onChanged,
-            activeColor: active,
-          ),
-        ),
-      ],
     );
   }
 }
