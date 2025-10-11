@@ -1,4 +1,4 @@
-package com.example.trainrides
+package de.kolaente.trainrides
 
 import io.flutter.embedding.android.FlutterActivity
 
