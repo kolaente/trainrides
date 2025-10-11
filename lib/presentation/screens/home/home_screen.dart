@@ -238,76 +238,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: ListView.builder(
               itemCount: trainRides.length + 1,
               itemBuilder: (context, index) {
-                if (index == 0) {
-                  return Container(
-                    margin: const EdgeInsets.all(16),
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primaryContainer,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Column(
-                          children: [
-                            Text(
-                              '$totalRides',
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onPrimaryContainer,
-                              ),
-                            ),
-                            Text(
-                              'Total Rides',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onPrimaryContainer,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Container(
-                          width: 1,
-                          height: 40,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onPrimaryContainer.withOpacity(0.3),
-                        ),
-                        Column(
-                          children: [
-                            Text(
-                              '${totalAmount.toStringAsFixed(2)} €',
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onPrimaryContainer,
-                              ),
-                            ),
-                            Text(
-                              'Total Amount',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onPrimaryContainer,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                }
-
-                final ride = trainRides[index - 1];
+                final ride = trainRides[index];
                 return TrainRideListItem(
                   ride: ride,
                   onTap: () {
@@ -339,15 +270,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           );
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const AddRideScreen()),
-          );
-        },
-        tooltip: 'Add Train Ride',
-        child: const Icon(Icons.add),
       ),
     );
   }

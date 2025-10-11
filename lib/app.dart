@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'presentation/providers/auth_provider.dart';
 import 'presentation/providers/theme_provider.dart' as theme_provider;
 import 'presentation/screens/auth/auth_screen.dart';
-import 'presentation/screens/home/home_screen.dart';
+import 'presentation/screens/main_navigation/main_navigation_screen.dart';
 
 class TrainRidesApp extends ConsumerWidget {
   const TrainRidesApp({super.key});
@@ -51,7 +51,7 @@ class TrainRidesApp extends ConsumerWidget {
           ),
           data: (authState) {
             if (authState.isAuthenticated) {
-              return const HomeScreen();
+              return const MainNavigationScreen();
             } else {
               return const AuthScreen();
             }
