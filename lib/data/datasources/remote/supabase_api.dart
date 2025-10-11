@@ -30,11 +30,7 @@ class SupabaseApi {
         .from('rides')
         .stream(primaryKey: ['id'])
         .eq('user_id', userId)
-        .map(
-          (rows) => rows
-              .map((e) => TrainRide.fromJson(e as Map<String, dynamic>))
-              .toList(),
-        );
+        .map((rows) => rows.map((e) => TrainRide.fromJson(e)).toList());
   }
 
   Future<List<Map<String, dynamic>>> fetchRideTypes() async {
