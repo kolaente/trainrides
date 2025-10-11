@@ -51,7 +51,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   await ref.read(trainRidesNotifierProvider.notifier).refresh();
                   break;
                 case 'logout':
-                  await ref.read(authNotifierProvider.notifier).logout();
+                  // Defer logout to allow popup menu animation to complete
+                  Future.delayed(const Duration(milliseconds: 300), () {
+                    if (mounted) {
+                      ref.read(authNotifierProvider.notifier).logout();
+                    }
+                  });
                   break;
               }
             },
