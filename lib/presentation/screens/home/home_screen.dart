@@ -4,11 +4,10 @@ import '../../providers/auth_provider.dart';
 import '../../providers/train_rides_provider.dart';
 import '../../providers/theme_provider.dart' as theme_provider;
 import '../../providers/theme_provider.dart';
-import '../add_ride/add_ride_screen.dart';
 import '../../../data/models/train_ride.dart' as model;
 import '../../../core/utils/date_utils.dart' as date_utils;
 import '../../widgets/type_label.dart';
-import '../../../components/RideBottomSheet.dart';
+import '../../../components/ride_bottom_sheet.dart';
 import '../ride_types/ride_types_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -144,12 +143,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ),
         data: (trainRides) {
-          final totalRides = trainRides.length;
-          final totalAmount = trainRides.fold(
-            0.0,
-            (sum, ride) => sum + ride.price,
-          );
-
           if (trainRides.isEmpty) {
             return Center(
               child: Column(
@@ -204,7 +197,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       border: Border.all(
                         color: Theme.of(
                           context,
-                        ).colorScheme.outline.withOpacity(0.3),
+                        ).colorScheme.outline.withValues(alpha: 0.3),
                       ),
                     ),
                     child: Row(
@@ -275,6 +268,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Future<void> _showThemeDialog(BuildContext context) async {
+    final dialogContext = context;
     final currentTheme = await ref.read(
       theme_provider.themeNotifierProvider.future,
     );
@@ -282,7 +276,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     if (!mounted) return;
 
     await showDialog<void>(
-      context: context,
+      // ignore: use_build_context_synchronously
+      context: dialogContext,
       builder: (context) => AlertDialog(
         title: const Text('Choose Theme'),
         content: Column(
@@ -323,7 +318,7 @@ class TrainRideListItem extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
         side: BorderSide(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
