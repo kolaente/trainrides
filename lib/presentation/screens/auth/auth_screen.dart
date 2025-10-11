@@ -133,6 +133,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                           keyboardType: TextInputType.emailAddress,
                           autocorrect: false,
                           enableSuggestions: false,
+                          autofillHints: const [AutofillHints.email],
                           decoration: InputDecoration(
                             labelText: 'Email',
                             hintText: 'you@example.com',
@@ -157,6 +158,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                           obscureText: !_isPasswordVisible,
                           autocorrect: false,
                           enableSuggestions: false,
+                          autofillHints: const [AutofillHints.password],
                           decoration: InputDecoration(
                             labelText: 'Password',
                             prefixIcon: const Icon(Icons.lock),
