@@ -220,9 +220,10 @@ class StatisticsScreen extends ConsumerWidget {
                           Container(
                             width: 1,
                             height: 40,
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onPrimaryContainer.withOpacity(0.3),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onPrimaryContainer
+                                .withValues(alpha: 0.3),
                           ),
                           Column(
                             children: [
@@ -281,43 +282,6 @@ class StatisticsScreen extends ConsumerWidget {
   }
 }
 
-class _SummaryItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-  final Color color;
-
-  const _SummaryItem({
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Icon(icon, size: 28, color: color),
-        const SizedBox(height: 8),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: color,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(fontSize: 14, color: color.withOpacity(0.8)),
-        ),
-      ],
-    );
-  }
-}
-
 class _CategoryCard extends StatelessWidget {
   final CategoryStats category;
   final double totalPrice;
@@ -335,7 +299,7 @@ class _CategoryCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
         side: BorderSide(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -374,7 +338,7 @@ class _CategoryCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Theme.of(
                       context,
-                    ).colorScheme.primary.withOpacity(0.2),
+                    ).colorScheme.primary.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(

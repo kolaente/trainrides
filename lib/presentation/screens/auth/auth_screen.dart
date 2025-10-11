@@ -100,7 +100,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                     side: BorderSide(
                       color: Theme.of(
                         context,
-                      ).colorScheme.outline.withOpacity(0.3),
+                      ).colorScheme.outline.withValues(alpha: 0.3),
                       width: 1,
                     ),
                   ),
@@ -268,7 +268,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                               minimumSize: const Size(double.infinity, 48),
                               backgroundColor: Theme.of(
                                 context,
-                              ).colorScheme.primary.withOpacity(0.7),
+                              ).colorScheme.primary.withValues(alpha: 0.7),
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,

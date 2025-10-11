@@ -159,6 +159,9 @@ class _DbLoungesScreenState extends ConsumerState<DbLoungesScreen> {
   }
 
   Future<void> _showVisitDialog(BuildContext context, DbLounge lounge) async {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    final errorColor = Theme.of(context).colorScheme.error;
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -177,29 +180,29 @@ class _DbLoungesScreenState extends ConsumerState<DbLoungesScreen> {
       ),
     );
 
-    if (confirmed == true && mounted) {
+    if (confirmed == true) {
+      if (!mounted) return;
+
       try {
         await ref
             .read(dbLoungeVisitsNotifierProvider.notifier)
             .addVisit(lounge.id!);
 
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Visit to ${lounge.displayName} recorded!'),
-              backgroundColor: Colors.green,
-            ),
-          );
-        }
+        if (!mounted) return;
+        scaffoldMessenger.showSnackBar(
+          SnackBar(
+            content: Text('Visit to ${lounge.displayName} recorded!'),
+            backgroundColor: Colors.green,
+          ),
+        );
       } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error recording visit: $e'),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
-        }
+        if (!mounted) return;
+        scaffoldMessenger.showSnackBar(
+          SnackBar(
+            content: Text('Error recording visit: $e'),
+            backgroundColor: errorColor,
+          ),
+        );
       }
     }
   }
@@ -241,7 +244,7 @@ class DbLoungeListItem extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
         side: BorderSide(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -299,9 +302,8 @@ class DbLoungeListItem extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: visitCount > 0
                         ? Theme.of(context).colorScheme.primaryContainer
-                        : Theme.of(
-                            context,
-                          ).colorScheme.secondaryContainer.withOpacity(0.5),
+                        : Theme.of(context).colorScheme.secondaryContainer
+                              .withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Row(
