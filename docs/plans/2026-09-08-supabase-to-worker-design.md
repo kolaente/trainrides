@@ -224,6 +224,39 @@ are applied against local D1 in setup.
 - `/db_lounge_visits/counts` groups correctly.
 - Write endpoints ignore client-supplied `id`, `user_id` and `created_at`.
 
+## Implementation steps
+
+Each step is one atomic commit and leaves the tree working.
+
+**1. D1 binding and schema.** Add `d1_databases` to `worker/wrangler.jsonc` with
+`migrations_dir`. Write `worker/migrations/0001_init.sql` — six tables plus the two
+indexes. Run `wrangler d1 migrations apply trainrides --local`, then `wrangler types` to
+regenerate `Env`. Add Hono to `package.json`.
+
+**2. Auth core.** `src/auth/password.ts` (PBKDF2 hash and constant-time verify),
+`src/auth/session.ts` (issue a random token, store its SHA-256, look up and expire), and
+the bearer middleware that attaches `userId` to the Hono context. Tests come first here:
+ownership isolation, wrong password, unknown email, missing/garbage/expired token, logout
+invalidation. Then `/auth/login`, `/auth/logout`, `/auth/me`, `/auth/signup` and
+`/auth/claim` with the `INVITE_CODE` gate and the claim-once rule.
+
+**3. Data routes.** `/rides`, `/ride_types`, `/db_lounges`, `/db_lounge_visits` and
+`/db_lounge_visits/counts`. Every query filtered by `userId`; every write body through a
+typed parser; `id`, `user_id` and `created_at` ignored when a client sends them.
+`origin`/`destination` mapped to `"from"`/`"to"` on the way out. CORS middleware.
+
+**4. Seed script.** `scripts/build-seed.ts` reads `dumps/*.csv` and emits `seed.sql`.
+Apply to local D1 and verify: 73 rides, 8 ride types, 13 lounges, 13 visits, one user, and
+`GET /rides` returning the same JSON shape the Flutter models already parse.
+
+**5. Flutter swap.** `rest_api.dart` replacing `supabase_api.dart`, rewritten
+`auth_provider.dart`, `Bearer` in `dio_client.dart`, `baseUrl` via `--dart-define`,
+`supabase_flutter` dropped from `pubspec.yaml`. Run against local `wrangler dev`.
+
+**6. Deploy.** `wrangler secret put INVITE_CODE`, deploy, apply migrations remote, import
+the seed, claim the account, verify the real data in the app, add the WAF rate-limit rule
+on `/auth/*`.
+
 ## Config and rollout
 
 `INVITE_CODE` via `wrangler secret put`. Flutter `baseUrl` via `--dart-define` with a
