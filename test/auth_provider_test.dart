@@ -67,8 +67,9 @@ void main() {
         calls.add(request.url.path);
         final body = jsonDecode(request.body) as Map;
         expect(body['email'], 'u@example.com');
-        if (request.url.path != '/auth/login')
+        if (request.url.path != '/auth/login') {
           expect(body['invite'], 'invitation');
+        }
         return http.Response(
           jsonEncode({
             'token': 'new-token',

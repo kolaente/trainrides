@@ -45,8 +45,9 @@ class AuthNotifier extends _$AuthNotifier {
   @override
   Future<AuthState> build() async {
     final client = ref.watch(httpClientProvider);
-    if (await client.getAuthToken() == null)
+    if (await client.getAuthToken() == null) {
       return const AuthState.unauthenticated();
+    }
     try {
       final response = await client.get('$_authUrl/me');
       return AuthState.authenticated(
