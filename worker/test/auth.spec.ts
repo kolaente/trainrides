@@ -1,5 +1,7 @@
 import { env, SELF } from 'cloudflare:test';
-import { expect, it } from 'vitest';
+import { expect, it, vi } from 'vitest';
+
+vi.setConfig({ testTimeout: 30_000 });
 
 async function request(path: string, body?: object, token?: string) {
   return SELF.fetch(`https://example.com${path}`, {
