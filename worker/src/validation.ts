@@ -34,3 +34,33 @@ export function rideType(value: Record<string, unknown>, partial = false) {
   if (!Object.keys(result).length) invalid('No fields to update.');
   return result;
 }
+
+export function date(value: unknown, name: string): string {
+  const text = string(value, name, 40);
+  if (!/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d{1,6})?(Z|[+-]\d{2}:\d{2})?)?$/.test(text)
+    || !Number.isFinite(Date.parse(text))
+    || new Date(`${text.slice(0, 10)}T00:00:00Z`).toISOString().slice(0, 10) !== text.slice(0, 10)) {
+    return invalid(`Invalid ${name}.`);
+  }
+  return text;
+}
+type RideWrite = { origin: string; destination: string; price: number; date: string; type_id: number | null; details: string | null };
+export function ride(value: Record<string, unknown>): RideWrite;
+export function ride(value: Record<string, unknown>, partial: true): Partial<RideWrite>;
+export function ride(value: Record<string, unknown>, partial = false): Partial<RideWrite> {
+  const result: Partial<RideWrite> = {};
+  if (!partial || 'from' in value) result.origin = string(value.from, 'from');
+  if (!partial || 'to' in value) result.destination = string(value.to, 'to');
+  if (!partial || 'price' in value) {
+    if (typeof value.price !== 'number' || !Number.isFinite(value.price) || value.price < 0) invalid('Invalid price.');
+    result.price = value.price;
+  }
+  if (!partial || 'date' in value) result.date = date(value.date, 'date').slice(0, 10);
+  if (!partial || 'type_id' in value) result.type_id = value.type_id == null ? null : id(value.type_id, 'type_id');
+  if (!partial || 'details' in value) {
+    if (value.details != null && (typeof value.details !== 'string' || value.details.length > 20000)) invalid('Invalid details.');
+    result.details = value.details as string | null | undefined ?? null;
+  }
+  if (!Object.keys(result).length) invalid('No fields to update.');
+  return result;
+}

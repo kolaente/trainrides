@@ -3,6 +3,7 @@ import { cors } from 'hono/cors';
 import { bodyLimit } from 'hono/body-limit';
 import auth from './auth/routes';
 import rideTypes from './routes/ride-types';
+import rides from './routes/rides';
 import { ApiError } from './errors';
 import type { AppEnv } from './types';
 
@@ -17,4 +18,5 @@ app.onError((error, c) => {
 app.notFound(c => c.json({ error: { code: 'not_found', message: 'Resource not found.' } }, 404));
 app.route('/auth', auth);
 app.route('/ride_types', rideTypes);
+app.route('/rides', rides);
 export default app;
