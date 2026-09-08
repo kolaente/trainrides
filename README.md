@@ -27,10 +27,30 @@ flutter run -d chrome --dart-define=API_BASE_URL=http://127.0.0.1:8787
 for an Android emulator or a reachable host address for a physical device.
 Production builds must set the deployed HTTPS URL.
 
-To create an account, enter an email and password, select **Create account**, and
-enter the local invite code. Passwords require at least eight characters. To claim
-an imported account, select **Claim my existing account** in that dialog and use
-the email attached to the export.
+## Accounts and invites
+
+Registration uses one shared invite code, stored in the Worker secret `INVITE_CODE`.
+To set or change the production code, run from `worker/`:
+
+```sh
+pnpm exec wrangler secret put INVITE_CODE
+```
+
+Choose a private code and share it with people you want to invite. For local
+development, use the code in `worker/.dev.vars`; the example file sets it to
+`local-development-invite`.
+
+- **New account:** enter an email and password, select **Create account**, then
+  enter the invite code.
+- **Imported account:** enter the email attached to the export and a new password,
+  select **Create account**, enter the invite code, and check **Claim my existing
+  account**. Claiming sets the password while preserving the account ID and its
+  rides. It only works once per account.
+- **Returning user:** select **Sign In** with your email and password. No invite
+  code is needed.
+
+New passwords require at least eight characters. The invite code is reusable;
+changing it affects future registrations and claims, not existing accounts.
 
 ## Import the Supabase export locally
 
