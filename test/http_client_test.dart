@@ -59,4 +59,25 @@ void main() {
       }
     },
   );
+  test(
+    'keeps HTTP status errors when proxies return other response shapes',
+    () async {
+      for (final body in [
+        '<html>Rate limited</html>',
+        'null',
+        '[]',
+        '"unavailable"',
+      ]) {
+        final client = HttpClient.withClient(
+          MockClient((_) async => http.Response(body, 429)),
+        );
+        await expectLater(
+          client.get('https://example.com'),
+          throwsA(
+            isA<ApiException>().having((e) => e.statusCode, 'statusCode', 429),
+          ),
+        );
+      }
+    },
+  );
 }

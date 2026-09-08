@@ -143,10 +143,11 @@ class HttpClient {
     String message = 'Request failed with status ${response.statusCode}';
     String? code;
     try {
-      final error = jsonDecode(response.body)['error'];
+      final payload = jsonDecode(response.body);
+      final error = payload is Map ? payload['error'] : null;
       if (error is Map && error['message'] is String) {
         message = error['message'] as String;
-        code = error['code'] as String?;
+        code = error['code'] is String ? error['code'] as String : null;
       }
     } on FormatException {
       // Proxies can return non-JSON errors.
