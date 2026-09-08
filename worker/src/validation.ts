@@ -27,8 +27,11 @@ export function pathId(value: string): number {
   if (!/^[1-9]\d*$/.test(value)) return invalid('Invalid id.');
   return id(Number(value));
 }
-export function rideType(value: Record<string, unknown>, partial = false) {
-  const result: { title?: string; color?: string } = {};
+type RideTypeWrite = { title: string; color: string };
+export function rideType(value: Record<string, unknown>): RideTypeWrite;
+export function rideType(value: Record<string, unknown>, partial: true): Partial<RideTypeWrite>;
+export function rideType(value: Record<string, unknown>, partial = false): Partial<RideTypeWrite> {
+  const result: Partial<RideTypeWrite> = {};
   if (!partial || 'title' in value) result.title = string(value.title, 'title', 200);
   if (!partial || 'color' in value) result.color = string(value.color, 'color', 50);
   if (!Object.keys(result).length) invalid('No fields to update.');

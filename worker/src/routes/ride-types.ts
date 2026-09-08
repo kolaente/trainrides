@@ -13,7 +13,7 @@ routes.get('/', async c => {
 routes.post('/', async c => {
   const value = rideType(await body(c));
   const row = await c.env.DB.prepare('INSERT INTO ride_types (user_id,title,color,created_at) VALUES (?,?,?,?) RETURNING *')
-    .bind(c.get('userId'), value.title!, value.color!, new Date().toISOString()).first();
+    .bind(c.get('userId'), value.title, value.color, new Date().toISOString()).first();
   return c.json(row, 201);
 });
 routes.patch('/:id', async c => {
