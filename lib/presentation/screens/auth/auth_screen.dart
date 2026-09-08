@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/auth_provider.dart';
+import 'invite_dialog.dart';
 
 class AuthScreen extends ConsumerStatefulWidget {
   const AuthScreen({super.key});
@@ -30,11 +31,20 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     }
   }
 
-  void _signUp() {
-    if (_formKey.currentState?.validate() ?? false) {
-      ref
-          .read(authNotifierProvider.notifier)
-          .signUp(_emailController.text.trim(), _passwordController.text);
+  Future<void> _signUp() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+    final invitation = await showDialog<Invitation>(
+      context: context,
+      builder: (_) => const InviteDialog(),
+    );
+    if (!mounted || invitation == null) return;
+    final auth = ref.read(authNotifierProvider.notifier);
+    if (invitation.claim) {
+      await auth.claim(email, password, invite: invitation.code);
+    } else {
+      await auth.signUp(email, password, invite: invitation.code);
     }
   }
 

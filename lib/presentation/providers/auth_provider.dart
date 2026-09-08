@@ -60,8 +60,11 @@ class AuthNotifier extends _$AuthNotifier {
     }
   }
 
-  Future<void> signUp(String email, String password, {String invite = ''}) =>
-      _authenticate('signup', email, password, invite: invite);
+  Future<void> signUp(
+    String email,
+    String password, {
+    required String invite,
+  }) => _authenticate('signup', email, password, invite: invite);
 
   Future<void> claim(String email, String password, {required String invite}) =>
       _authenticate('claim', email, password, invite: invite);
