@@ -1,7 +1,11 @@
 # Replacing Supabase with a Cloudflare Worker
 
 Date: 2026-09-08
-Status: Approved, not yet implemented
+Status: Implemented and verified locally; production rollout pending
+
+Implementation notes: the supplied visit CSV contains 14 rows, rather than the 13
+listed below. All 14 were preserved. An invite/claim dialog was added with user
+approval. See `docs/worker-rollout.md` for the remaining deployment steps.
 
 ## Context
 
