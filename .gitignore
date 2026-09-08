@@ -62,3 +62,6 @@ PLAN.md
 /.crush
 /dumps
 
+
+/seed.sql
+/.pnpm-store/
