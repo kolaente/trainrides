@@ -64,3 +64,9 @@ export function ride(value: Record<string, unknown>, partial = false): Partial<R
   if (!Object.keys(result).length) invalid('No fields to update.');
   return result;
 }
+
+export function visit(value: Record<string, unknown>) {
+  let visitedAt = value.visited_at === undefined ? new Date().toISOString() : date(value.visited_at, 'visited_at');
+  if (!/(Z|[+-]\d{2}:\d{2})$/.test(visitedAt)) visitedAt += visitedAt.length === 10 ? 'T00:00:00Z' : 'Z';
+  return { db_lounge_id: id(value.db_lounge_id, 'db_lounge_id'), visited_at: new Date(visitedAt).toISOString() };
+}
