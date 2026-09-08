@@ -60,4 +60,5 @@ devenv.local.nix
 /instructions/*.md
 PLAN.md
 /.crush
+/dumps
 
