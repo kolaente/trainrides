@@ -1,21 +1,20 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../data/models/train_ride.dart' as model;
-import '../../data/datasources/remote/supabase_api.dart';
+import 'auth_provider.dart';
+import 'network_provider.dart';
 
 part 'train_rides_provider.g.dart';
-
-@riverpod
-SupabaseApi supabaseApi(Ref ref) {
-  return SupabaseApi(Supabase.instance.client);
-}
 
 @riverpod
 class TrainRidesNotifier extends _$TrainRidesNotifier {
   @override
   Future<List<model.TrainRide>> build() async {
-    final api = ref.read(supabaseApiProvider);
+    final user = ref.watch(
+      authNotifierProvider.select((state) => state.valueOrNull?.user?.id),
+    );
+    if (user == null) return [];
+    final api = ref.read(apiProvider);
     return await api.fetchRides();
   }
 
@@ -25,8 +24,8 @@ class TrainRidesNotifier extends _$TrainRidesNotifier {
 
   Future<void> addTrainRide(model.TrainRide ride) async {
     try {
-      final api = ref.read(supabaseApiProvider);
-      final currentUser = api.client.auth.currentUser;
+      final api = ref.read(apiProvider);
+      final currentUser = ref.read(authNotifierProvider).valueOrNull?.user;
 
       if (currentUser == null) {
         throw Exception(
@@ -34,7 +33,6 @@ class TrainRidesNotifier extends _$TrainRidesNotifier {
         );
       }
 
-      // Ensure the ride includes the current user's ID
       final rideWithUserId = ride.copyWith(userId: currentUser.id);
       await api.addRide(rideWithUserId.toJson());
       ref.invalidateSelf();
@@ -45,8 +43,8 @@ class TrainRidesNotifier extends _$TrainRidesNotifier {
 
   Future<void> updateTrainRide(model.TrainRide ride) async {
     try {
-      final api = ref.read(supabaseApiProvider);
-      final currentUser = api.client.auth.currentUser;
+      final api = ref.read(apiProvider);
+      final currentUser = ref.read(authNotifierProvider).valueOrNull?.user;
 
       if (currentUser == null) {
         throw Exception(
@@ -70,8 +68,8 @@ class TrainRidesNotifier extends _$TrainRidesNotifier {
 
   Future<void> deleteTrainRide(int id) async {
     try {
-      final api = ref.read(supabaseApiProvider);
-      final currentUser = api.client.auth.currentUser;
+      final api = ref.read(apiProvider);
+      final currentUser = ref.read(authNotifierProvider).valueOrNull?.user;
 
       if (currentUser == null) {
         throw Exception(
@@ -198,7 +196,11 @@ Future<List<model.TrainRide>> trainRidesByDateRange(
 
 @riverpod
 Future<model.TrainRide?> trainRideById(Ref ref, int id) async {
-  final api = ref.read(supabaseApiProvider);
+  final user = ref.watch(
+    authNotifierProvider.select((state) => state.valueOrNull?.user?.id),
+  );
+  if (user == null) return null;
+  final api = ref.read(apiProvider);
 
   try {
     final list = await api.fetchRides();
@@ -216,7 +218,11 @@ Future<model.TrainRide?> trainRideById(Ref ref, int id) async {
 class RideTypesNotifier extends _$RideTypesNotifier {
   @override
   Future<List<Map<String, dynamic>>> build() async {
-    final api = ref.read(supabaseApiProvider);
+    final user = ref.watch(
+      authNotifierProvider.select((state) => state.valueOrNull?.user?.id),
+    );
+    if (user == null) return [];
+    final api = ref.read(apiProvider);
     return await api.fetchRideTypes();
   }
 
@@ -226,12 +232,8 @@ class RideTypesNotifier extends _$RideTypesNotifier {
 
   Future<void> addRideType(String title, String color) async {
     try {
-      final api = ref.read(supabaseApiProvider);
-      await api.addRideType({
-        'title': title,
-        'color': color,
-        'user_id': api.client.auth.currentUser?.id,
-      });
+      final api = ref.read(apiProvider);
+      await api.addRideType({'title': title, 'color': color});
       ref.invalidateSelf();
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
@@ -240,7 +242,7 @@ class RideTypesNotifier extends _$RideTypesNotifier {
 
   Future<void> updateRideType(int id, String title, String color) async {
     try {
-      final api = ref.read(supabaseApiProvider);
+      final api = ref.read(apiProvider);
       await api.updateRideType(id, {'title': title, 'color': color});
       ref.invalidateSelf();
     } catch (error, stackTrace) {
@@ -250,7 +252,7 @@ class RideTypesNotifier extends _$RideTypesNotifier {
 
   Future<void> deleteRideType(int id) async {
     try {
-      final api = ref.read(supabaseApiProvider);
+      final api = ref.read(apiProvider);
       await api.deleteRideType(id);
       ref.invalidateSelf();
     } catch (error, stackTrace) {

@@ -6,24 +6,7 @@ part of 'train_rides_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$supabaseApiHash() => r'52be0e70e0140e126ea34bf44522e6b25bc0b6c2';
-
-/// See also [supabaseApi].
-@ProviderFor(supabaseApi)
-final supabaseApiProvider = AutoDisposeProvider<SupabaseApi>.internal(
-  supabaseApi,
-  name: r'supabaseApiProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$supabaseApiHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef SupabaseApiRef = AutoDisposeProviderRef<SupabaseApi>;
-String _$rideTypeTitlesHash() => r'ee7295b792a0e14f05defbb7789eab54a6eb7a78';
+String _$rideTypeTitlesHash() => r'e329eee523dc299e7f7a930ed4f43eab6a786e2c';
 
 /// See also [rideTypeTitles].
 @ProviderFor(rideTypeTitles)
@@ -40,7 +23,7 @@ final rideTypeTitlesProvider = AutoDisposeProvider<List<String>>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef RideTypeTitlesRef = AutoDisposeProviderRef<List<String>>;
-String _$rideTypeByIdHash() => r'2c7ce367c2dc8afaad4304084702970c91428a43';
+String _$rideTypeByIdHash() => r'a1d4450fd2b7a6598af3c472f5b46a37ee2f8ed1';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -182,7 +165,7 @@ class _RideTypeByIdProviderElement
 }
 
 String _$trainRidesByDateRangeHash() =>
-    r'7ecc1dd631be0333781546a747cb94bdb77e6881';
+    r'b16c8170fe27bfdc358b429fcb64a474310e3e75';
 
 /// See also [trainRidesByDateRange].
 @ProviderFor(trainRidesByDateRange)
@@ -319,7 +302,7 @@ class _TrainRidesByDateRangeProviderElement
   DateTime get end => (origin as TrainRidesByDateRangeProvider).end;
 }
 
-String _$trainRideByIdHash() => r'4446f44923f73659f0c51095131b98c32e5040f5';
+String _$trainRideByIdHash() => r'360bf72093d94865cb4798bdb47905756f26ba63';
 
 /// See also [trainRideById].
 @ProviderFor(trainRideById)
@@ -441,7 +424,7 @@ class _TrainRideByIdProviderElement
 }
 
 String _$trainRidesNotifierHash() =>
-    r'f3e21c018a8054012ec3638b73e200b2c2f2db07';
+    r'1671c2f89e48b3e67f13dab6f58729f59f5f51c0';
 
 /// See also [TrainRidesNotifier].
 @ProviderFor(TrainRidesNotifier)
@@ -608,7 +591,7 @@ class _TrainRideSearchNotifierProviderElement
   String get query => (origin as TrainRideSearchNotifierProvider).query;
 }
 
-String _$rideTypesNotifierHash() => r'30761b6f75d6a0ea4cd7a2adc6223620b5953a3a';
+String _$rideTypesNotifierHash() => r'fef6ad2579adda6c13f34d20866f00643c0ddc9f';
 
 /// See also [RideTypesNotifier].
 @ProviderFor(RideTypesNotifier)

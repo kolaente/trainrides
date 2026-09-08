@@ -63,8 +63,9 @@ void main() {
       HttpClient.withClient(
         MockClient((request) async {
           calls.add('${request.method} ${request.url.path}');
-          if (request.method != 'DELETE')
+          if (request.method != 'DELETE') {
             expect(jsonDecode(request.body), isA<Map>());
+          }
           return http.Response('', request.method == 'DELETE' ? 204 : 201);
         }),
       ),

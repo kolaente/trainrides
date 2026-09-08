@@ -1,27 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'app.dart';
-import 'presentation/providers/auth_provider.dart';
 
-Future<void> main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  await Supabase.initialize(
-    url: 'https://lhyuxcetpagvaqiirbaq.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxoeXV4Y2V0cGFndmFxaWlyYmFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQwNzI0MDIsImV4cCI6MjA2OTY0ODQwMn0.qphRuNRmIomKtI97-FN7KAAzXurFJr3_rcBFLuXPAZ4',
-  );
-
-  final container = ProviderContainer();
-
-  // Initialize auth state listener
-  final authNotifier = container.read(authNotifierProvider.notifier);
-  authNotifier.listenAuthChanges();
-
-  runApp(
-    UncontrolledProviderScope(
-      container: container,
-      child: const TrainRidesApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: TrainRidesApp()));
 }

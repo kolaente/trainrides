@@ -45,9 +45,6 @@ dependencies:
   # Local storage for token only
   shared_preferences: ^2.2.2
 
-  # Supabase and env
-  supabase_flutter: ^2.5.10
-
   # JSON serialization
   json_annotation: ^4.8.1
 

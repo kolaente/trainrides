@@ -7,7 +7,7 @@ part of 'db_lounge_provider.dart';
 // **************************************************************************
 
 String _$dbLoungeVisitCountHash() =>
-    r'2e3c9fa94a29be03e601c46623d152f2593898e0';
+    r'6750803180f408ed09821537e9bab2391a965da3';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -149,7 +149,7 @@ class _DbLoungeVisitCountProviderElement
 }
 
 String _$dbLoungeVisitCountsHash() =>
-    r'224294c5a171077224ad221faa3b39ac3d5ba12b';
+    r'00aa17001fea198eedfa523410059d9625693557';
 
 /// See also [dbLoungeVisitCounts].
 @ProviderFor(dbLoungeVisitCounts)
@@ -167,7 +167,7 @@ final dbLoungeVisitCountsProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DbLoungeVisitCountsRef = AutoDisposeFutureProviderRef<Map<int, int>>;
-String _$dbLoungesNotifierHash() => r'da7d4d01e00b0ec49880b51fd54b2d395b89f248';
+String _$dbLoungesNotifierHash() => r'bb63dccb1780f5826064806433d54bdf36e2e917';
 
 /// See also [DbLoungesNotifier].
 @ProviderFor(DbLoungesNotifier)
@@ -187,7 +187,7 @@ final dbLoungesNotifierProvider =
 
 typedef _$DbLoungesNotifier = AutoDisposeAsyncNotifier<List<DbLounge>>;
 String _$dbLoungeVisitsNotifierHash() =>
-    r'daea81c4946c6e571c44df007edd1c59b1bdaee3';
+    r'3a8f2a0ba0d4f904c90c2badef2b3027a743896b';
 
 /// See also [DbLoungeVisitsNotifier].
 @ProviderFor(DbLoungeVisitsNotifier)

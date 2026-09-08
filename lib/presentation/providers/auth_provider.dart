@@ -1,122 +1,110 @@
+import 'dart:convert';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../core/constants/api_constants.dart';
+import '../../core/errors/exceptions.dart';
+import 'network_provider.dart';
 
 part 'auth_provider.g.dart';
 
 enum AuthStatus { unauthenticated, authenticated, loading, error }
 
+class AuthUser {
+  final String id;
+  final String email;
+  const AuthUser({required this.id, required this.email});
+  factory AuthUser.fromJson(Map<String, dynamic> json) =>
+      AuthUser(id: json['id'] as String, email: json['email'] as String);
+}
+
 class AuthState {
   final AuthStatus status;
-  final String? token;
+  final AuthUser? user;
   final String? error;
-  final Session? session;
-
-  const AuthState({required this.status, this.token, this.error, this.session});
 
   const AuthState.unauthenticated()
     : status = AuthStatus.unauthenticated,
-      token = null,
-      session = null,
+      user = null,
       error = null;
-
-  const AuthState.authenticated(this.session)
+  const AuthState.authenticated(AuthUser this.user)
     : status = AuthStatus.authenticated,
-      token = null,
       error = null;
-
-  const AuthState.loading()
-    : status = AuthStatus.loading,
-      token = null,
-      session = null,
-      error = null;
-
-  const AuthState.error(this.error)
+  const AuthState.error(String this.error)
     : status = AuthStatus.error,
-      token = null,
-      session = null;
+      user = null;
 
-  AuthState copyWith({
-    AuthStatus? status,
-    String? token,
-    String? error,
-    Session? session,
-  }) {
-    return AuthState(
-      status: status ?? this.status,
-      token: token ?? this.token,
-      error: error ?? this.error,
-      session: session ?? this.session,
-    );
-  }
-
-  bool get isAuthenticated =>
-      status == AuthStatus.authenticated && session != null;
+  bool get isAuthenticated => status == AuthStatus.authenticated;
   bool get isLoading => status == AuthStatus.loading;
   bool get hasError => status == AuthStatus.error;
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class AuthNotifier extends _$AuthNotifier {
+  String get _authUrl =>
+      '${ApiConstants.baseUrl.replaceFirst(RegExp(r'/$'), '')}/auth';
+
   @override
   Future<AuthState> build() async {
+    final client = ref.watch(httpClientProvider);
+    if (await client.getAuthToken() == null)
+      return const AuthState.unauthenticated();
     try {
-      final initial = Supabase.instance.client.auth.currentSession;
-      if (initial != null) {
-        return AuthState.authenticated(initial);
-      }
-    } catch (_) {}
-    return const AuthState.unauthenticated();
-  }
-
-  Future<void> signUp(String email, String password) async {
-    state = const AsyncValue.loading();
-    try {
-      final res = await Supabase.instance.client.auth.signUp(
-        email: email,
-        password: password,
+      final response = await client.get('$_authUrl/me');
+      return AuthState.authenticated(
+        AuthUser.fromJson(jsonDecode(response.body)['user']),
       );
-      final session = res.session;
-      if (session != null) {
-        state = AsyncValue.data(AuthState.authenticated(session));
-      } else {
-        state = const AsyncValue.data(AuthState.unauthenticated());
-      }
+    } on AuthException {
+      await client.clearAuthToken();
+      return const AuthState.unauthenticated();
     } catch (e) {
-      state = AsyncValue.data(AuthState.error(e.toString()));
+      return AuthState.error(e.toString());
     }
   }
 
-  Future<void> signIn(String email, String password) async {
+  Future<void> signUp(String email, String password, {String invite = ''}) =>
+      _authenticate('signup', email, password, invite: invite);
+
+  Future<void> claim(String email, String password, {required String invite}) =>
+      _authenticate('claim', email, password, invite: invite);
+
+  Future<void> signIn(String email, String password) =>
+      _authenticate('login', email, password);
+
+  Future<void> _authenticate(
+    String action,
+    String email,
+    String password, {
+    String? invite,
+  }) async {
+    final client = ref.read(httpClientProvider);
     state = const AsyncValue.loading();
     try {
-      final res = await Supabase.instance.client.auth.signInWithPassword(
-        email: email,
-        password: password,
+      await client.clearAuthToken();
+      final response = await client.post(
+        '$_authUrl/$action',
+        body: jsonEncode({
+          'email': email,
+          'password': password,
+          if (invite != null) 'invite': invite,
+        }),
       );
-      final session = res.session;
-      if (session != null) {
-        state = AsyncValue.data(AuthState.authenticated(session));
-      } else {
-        state = const AsyncValue.data(AuthState.unauthenticated());
-      }
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      final user = AuthUser.fromJson(json['user'] as Map<String, dynamic>);
+      await client.setAuthToken(json['token'] as String);
+      state = AsyncValue.data(AuthState.authenticated(user));
     } catch (e) {
       state = AsyncValue.data(AuthState.error(e.toString()));
     }
   }
 
   Future<void> logout() async {
-    await Supabase.instance.client.auth.signOut();
-    state = const AsyncValue.data(AuthState.unauthenticated());
-  }
-
-  void listenAuthChanges() {
-    Supabase.instance.client.auth.onAuthStateChange.listen((data) {
-      final session = data.session;
-      if (session != null) {
-        state = AsyncValue.data(AuthState.authenticated(session));
-      } else {
-        state = const AsyncValue.data(AuthState.unauthenticated());
-      }
-    });
+    final client = ref.read(httpClientProvider);
+    try {
+      await client.post('$_authUrl/logout', body: '{}');
+    } on AppException {
+      // Local logout must also work offline.
+    } finally {
+      await client.clearAuthToken();
+      state = const AsyncValue.data(AuthState.unauthenticated());
+    }
   }
 }
