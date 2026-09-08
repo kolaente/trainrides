@@ -133,20 +133,18 @@ visit row and counts them in Dart.
 
 Both retrieved from Cloudflare docs on 2026-09-08.
 
-**Workers CPU limit is 10 ms per request on the Free plan**, 30 s by default on Paid.
-PBKDF2 at 600k iterations costs roughly 300–600 ms of CPU, so on Free every login dies
-with Error 1102. This forces a choice: Workers Paid at $5/mo, or cutting iterations to
-what fits in 10 ms (~15–20k), which is far below the OWASP recommendation and materially
-weakens the hashes against an offline attack on a stolen D1 dump. Logins are rare because
-the session token is cached client-side, so this is a plan-cost decision, not a
-throughput one. **Recommendation: Workers Paid, keep iterations high.**
+**Workers CPU limit.** The account is on Workers Paid, so the limit is 30 s per request
+by default (5 min max), not the Free plan's 10 ms. PBKDF2 at 600k iterations costs roughly
+300–600 ms of CPU, which fits comfortably. Iterations stay at the OWASP-recommended level;
+no security tradeoff is needed here. Note that this makes Paid a hard requirement, not a
+preference — on Free every login would die with Error 1102.
 
 **D1 has no interactive transactions.** Multi-statement atomicity is only available via
 `db.batch()`, which executes sequentially and rolls back the whole list on failure. This
 affects signup (insert user + session) and the data import.
 
-Other D1 limits, none of them close to binding here: 500 MB per database and 50 queries
-per Worker invocation on Free, 100 bound parameters per query, 100 KB per SQL statement.
+Other D1 limits, none of them close to binding here: 10 GB per database and 1,000 queries
+per Worker invocation on Paid, 100 bound parameters per query, 100 KB per SQL statement.
 
 ## Flutter changes
 
