@@ -10,3 +10,13 @@ it('allows browser bearer requests', async () => {
   expect(response.status).toBe(204);
   expect(response.headers.get('Access-Control-Allow-Headers')).toContain('Authorization');
 });
+it('requires a token on every user-data route', async () => {
+  for (const [path, method] of [
+    ['/rides', 'GET'], ['/rides', 'POST'], ['/rides/1', 'PATCH'], ['/rides/1', 'DELETE'],
+    ['/ride_types', 'GET'], ['/ride_types', 'POST'], ['/ride_types/1', 'PATCH'], ['/ride_types/1', 'DELETE'],
+    ['/db_lounge_visits', 'GET'], ['/db_lounge_visits', 'POST'], ['/db_lounge_visits/counts', 'GET'],
+  ]) {
+    const response = await SELF.fetch(`https://example.com${path}`, { method });
+    expect(response.status, `${method} ${path}`).toBe(401);
+  }
+});
