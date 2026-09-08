@@ -14,9 +14,10 @@ pnpm exec wrangler whoami
 pnpm exec wrangler d1 create trainrides
 ```
 
-If the database already exists, use `wrangler d1 list` to find it. Replace the
-all-zero `database_id` in `wrangler.jsonc` with the real ID and run `pnpm cf-typegen`.
-The zero ID is only a local-development placeholder.
+The repository now binds `trainrides` to database
+`eea668c8-886f-4c6b-81d0-551b41139f32`. Skip creation when using this database.
+For another account, use `wrangler d1 list` to find the database, update
+`database_id` in `wrangler.jsonc`, and run `pnpm cf-typegen`.
 
 Choose a custom API hostname in your Cloudflare zone. Add its Worker custom-domain
 route to `wrangler.jsonc` and set `workers_dev: false` and `preview_urls: false` so

@@ -8,7 +8,7 @@
   "d1_databases": [{
     "binding": "DB",
     "database_name": "trainrides",
-    "database_id": "00000000-0000-0000-0000-000000000000",
+    "database_id": "eea668c8-886f-4c6b-81d0-551b41139f32",
     "migrations_dir": "migrations"
   }]
 }
