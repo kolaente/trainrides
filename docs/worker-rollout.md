@@ -1,8 +1,8 @@
 # Worker rollout
 
-Implementation and local migration verification are complete. Production deployment,
-remote import, account claim, and WAF configuration remain pending. The saved Wrangler
-login was expired during implementation on 2026-09-08.
+The Worker and imported data are deployed. Production password hashing was fixed on
+2026-09-08 to support Cloudflare's native PBKDF2 iteration cap. Account claiming and
+WAF configuration still need final verification.
 
 ## Provision and deploy
 
@@ -28,7 +28,7 @@ The custom hostname must be configured before disabling alternate URLs.
 ```sh
 pnpm exec wrangler d1 migrations apply trainrides --remote
 pnpm exec wrangler secret put INVITE_CODE
-pnpm deploy
+pnpm run deploy
 ```
 
 Use a fresh private invite code for production. The checked-in example code is for

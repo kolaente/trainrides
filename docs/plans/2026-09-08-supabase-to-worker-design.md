@@ -141,11 +141,15 @@ visit row and counts them in Dart.
 
 Both retrieved from Cloudflare docs on 2026-09-08.
 
-**Workers CPU limit.** The account is on Workers Paid, so the limit is 30 s per request
-by default (5 min max), not the Free plan's 10 ms. PBKDF2 at 600k iterations costs roughly
-300–600 ms of CPU, which fits comfortably. Iterations stay at the OWASP-recommended level;
-no security tradeoff is needed here. Note that this makes Paid a hard requirement, not a
-preference — on Free every login would die with Error 1102.
+**Password hashing.** Production Workers reject native PBKDF2 above 100,000 iterations,
+even though local workerd accepts 600,000. This caused account claims to fail after
+deployment. Password hashing now uses `@noble/hashes` PBKDF2-HMAC-SHA256 at 600,000
+iterations, preserving the existing salt encoding and hash format. A remote Cloudflare
+preview verified hashing and verification together in about 4.3 seconds, including
+network time. Workers Paid remains required for the CPU cost. Regression tests simulate
+the native limit and verify compatibility with existing Web Crypto hashes.
+
+See the [Cloudflare runtime issue](https://github.com/cloudflare/workerd/issues/1346).
 
 **D1 has no interactive transactions.** Multi-statement atomicity is only available via
 `db.batch()`, which executes sequentially and rolls back the whole list on failure. This
