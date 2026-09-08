@@ -1,7 +1,7 @@
 class ApiConstants {
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://localhost:8787',
+    defaultValue: 'https://trainrides.kolaente.workers.dev',
   );
 
   static const Duration connectionTimeout = Duration(seconds: 30);
