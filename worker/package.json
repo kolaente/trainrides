@@ -8,7 +8,9 @@
 		"dev": "wrangler dev",
 		"start": "wrangler dev",
 		"test": "vitest",
-		"cf-typegen": "wrangler types"
+		"cf-typegen": "wrangler types",
+		"check": "tsc --noEmit && tsc --noEmit -p test/tsconfig.json",
+		"test:seed": "node --test ../scripts/build-seed.test.ts"
 	},
 	"devDependencies": {
 		"@cloudflare/vitest-plugin": "^1.0.0",
