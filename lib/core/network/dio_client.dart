@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/api_constants.dart';
@@ -8,6 +8,7 @@ class HttpClient {
   static final HttpClient _instance = HttpClient._internal();
   factory HttpClient() => _instance;
   HttpClient._internal();
+  HttpClient.withClient(http.Client client) : _client = client;
 
   http.Client? _client;
   String? _authToken;
@@ -39,7 +40,7 @@ class HttpClient {
     return {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      if (_authToken != null) 'Authorization': 'Token $_authToken',
+      if (_authToken != null) 'Authorization': 'Bearer $_authToken',
     };
   }
 
@@ -57,9 +58,9 @@ class HttpClient {
           .timeout(ApiConstants.requestTimeout);
 
       return _handleResponse(response);
-    } on SocketException {
-      throw const NetworkException('No internet connection');
-    } on HttpException {
+    } on AppException {
+      rethrow;
+    } on http.ClientException {
       throw const NetworkException('Network error occurred');
     } catch (e) {
       throw NetworkException('Request failed: ${e.toString()}');
@@ -74,9 +75,9 @@ class HttpClient {
           .timeout(ApiConstants.requestTimeout);
 
       return _handleResponse(response);
-    } on SocketException {
-      throw const NetworkException('No internet connection');
-    } on HttpException {
+    } on AppException {
+      rethrow;
+    } on http.ClientException {
       throw const NetworkException('Network error occurred');
     } catch (e) {
       throw NetworkException('Request failed: ${e.toString()}');
@@ -91,9 +92,9 @@ class HttpClient {
           .timeout(ApiConstants.requestTimeout);
 
       return _handleResponse(response);
-    } on SocketException {
-      throw const NetworkException('No internet connection');
-    } on HttpException {
+    } on AppException {
+      rethrow;
+    } on http.ClientException {
       throw const NetworkException('Network error occurred');
     } catch (e) {
       throw NetworkException('Request failed: ${e.toString()}');
@@ -108,9 +109,9 @@ class HttpClient {
           .timeout(ApiConstants.requestTimeout);
 
       return _handleResponse(response);
-    } on SocketException {
-      throw const NetworkException('No internet connection');
-    } on HttpException {
+    } on AppException {
+      rethrow;
+    } on http.ClientException {
       throw const NetworkException('Network error occurred');
     } catch (e) {
       throw NetworkException('Request failed: ${e.toString()}');
@@ -125,9 +126,9 @@ class HttpClient {
           .timeout(ApiConstants.requestTimeout);
 
       return _handleResponse(response);
-    } on SocketException {
-      throw const NetworkException('No internet connection');
-    } on HttpException {
+    } on AppException {
+      rethrow;
+    } on http.ClientException {
       throw const NetworkException('Network error occurred');
     } catch (e) {
       throw NetworkException('Request failed: ${e.toString()}');
@@ -139,23 +140,21 @@ class HttpClient {
       return response;
     }
 
-    switch (response.statusCode) {
-      case 401:
-        throw const AuthException('Unauthorized - Invalid token');
-      case 403:
-        throw const AuthException('Forbidden - Access denied');
-      case 404:
-        throw const ApiException('Resource not found');
-      case 429:
-        throw const ApiException('Too many requests - Rate limited');
-      case 500:
-        throw const ApiException('Internal server error');
-      default:
-        throw ApiException(
-          'Request failed with status ${response.statusCode}',
-          statusCode: response.statusCode,
-        );
+    String message = 'Request failed with status ${response.statusCode}';
+    String? code;
+    try {
+      final error = jsonDecode(response.body)['error'];
+      if (error is Map && error['message'] is String) {
+        message = error['message'] as String;
+        code = error['code'] as String?;
+      }
+    } on FormatException {
+      // Proxies can return non-JSON errors.
     }
+    if (response.statusCode == 401 || response.statusCode == 403) {
+      throw AuthException(message, code: code);
+    }
+    throw ApiException(message, code: code, statusCode: response.statusCode);
   }
 
   void dispose() {
