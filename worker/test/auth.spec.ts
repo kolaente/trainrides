@@ -56,3 +56,23 @@ it('returns structured validation errors', async () => {
   expect(response.status).toBe(400);
   expect(await response.json()).toEqual({ error: { code: 'invalid_request', message: expect.any(String) } });
 });
+
+it('allows only one concurrent claim and issues only one session', async () => {
+  await env.DB.prepare('INSERT INTO users (id,email,created_at) VALUES (?,?,?)')
+    .bind('migrated', credentials.email, new Date().toISOString()).run();
+  const responses = await Promise.all([
+    request('/auth/claim', credentials),
+    request('/auth/claim', { ...credentials, password: 'another-password' }),
+  ]);
+  expect(responses.map(r => r.status).sort()).toEqual([200, 409]);
+  expect(await env.DB.prepare('SELECT COUNT(*) AS count FROM sessions').first('count')).toBe(1);
+});
+
+it('allows only one concurrent signup for an email', async () => {
+  const responses = await Promise.all([
+    request('/auth/signup', credentials), request('/auth/signup', credentials),
+  ]);
+  expect(responses.map(r => r.status).sort()).toEqual([201, 409]);
+  expect(await env.DB.prepare('SELECT COUNT(*) AS count FROM users').first('count')).toBe(1);
+  expect(await env.DB.prepare('SELECT COUNT(*) AS count FROM sessions').first('count')).toBe(1);
+});
