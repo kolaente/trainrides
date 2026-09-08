@@ -63,7 +63,7 @@ sessions(token_hash TEXT PK, user_id TEXT NOT NULL REFERENCES users(id) ON DELET
          created_at TEXT NOT NULL, expires_at TEXT NOT NULL)
 
 ride_types(id INTEGER PK AUTOINCREMENT, user_id TEXT NOT NULL REFERENCES users(id),
-           title TEXT NOT NULL, color TEXT NOT NULL)
+           title TEXT NOT NULL, color TEXT NOT NULL, created_at TEXT NOT NULL)
 
 rides(id INTEGER PK AUTOINCREMENT, user_id TEXT NOT NULL REFERENCES users(id),
       origin TEXT NOT NULL, destination TEXT NOT NULL, price REAL NOT NULL,
@@ -74,7 +74,7 @@ db_lounges(id INTEGER PK, location TEXT NOT NULL, anchor TEXT NOT NULL)
 
 db_lounge_visits(id INTEGER PK AUTOINCREMENT, user_id TEXT NOT NULL REFERENCES users(id),
                  db_lounge_id INTEGER NOT NULL REFERENCES db_lounges(id),
-                 visited_at TEXT NOT NULL, created_at TEXT NOT NULL)
+                 visited_at TEXT NOT NULL, created_at TEXT)
 ```
 
 Indexes: `rides(user_id, date DESC)`, `db_lounge_visits(user_id, db_lounge_id)`.
@@ -92,6 +92,10 @@ Why these shapes:
 - `sessions` stores a SHA-256 of the token, never the token itself. A leaked D1 dump then
   does not hand over live sessions.
 - `password_hash` is nullable to support migrated users who have not claimed yet.
+- `db_lounge_visits.created_at` is nullable. The Supabase table never had the column, so
+  the migrated rows genuinely do not know it; new rows set it. `DbLoungeVisit.createdAt`
+  is already `DateTime?` in Dart and unused in the UI.
+- `ride_types.created_at` exists in the export, so it is carried over rather than dropped.
 
 ## API
 
@@ -165,17 +169,35 @@ forge ownership or backdate a row.
 
 ## Data migration
 
-One shot, no dual-write period.
+One shot, no dual-write period. Exports are in `dumps/`, taken 2026-09-08:
 
-1. Export `rides`, `ride_types`, `db_lounges`, `db_lounge_visits` and `auth.users(id, email)`
-   from Supabase as CSV.
-2. A script converts them to `INSERT` statements, renaming `from`/`to` to
-   `origin`/`destination` and preserving explicit integer IDs.
+| File | Rows | Columns |
+|---|---|---|
+| `rides_rows.csv` | 73 | id, created_at, from, to, price, date, details, user_id, type_id |
+| `ride_types_rows.csv` | 8 | id, title, color, user_id, created_at |
+| `db_lounges_rows.csv` | 13 | id, location, anchor |
+| `db_lounge_visits_rows.csv` | 13 | id, db_lounge_id, user_id, visited_at |
+
+The data is clean: every `type_id` and `db_lounge_id` resolves, no commas or quotes appear
+in any text field, 18 rides have an empty `details`. IDs are sparse (ride types start at 3,
+lounges skip 2 and 5) and are preserved as-is.
+
+There is exactly one user across all three user-scoped tables:
+`6a14f200-33b0-4820-90f3-9c09f6a66e0a`, `trainrides@kolaente.de`. `auth.users` was not
+exported, so the seed script inserts that single row literally, with `password_hash = NULL`.
+
+Steps:
+
+1. A script reads `dumps/*.csv` and emits `seed.sql`: the one `users` row, then the four
+   tables. `from`/`to` become `origin`/`destination`; integer IDs are explicit.
+2. Timestamps are normalized to ISO-8601. The export uses a space separator, microsecond
+   precision, and a `+00` offset (`2025-10-11 13:49:52.080689+00`), while `visited_at`
+   carries no timezone at all — naive values are treated as UTC. `rides.date` is date-only
+   and stays `2025-07-03`.
 3. `wrangler d1 execute trainrides --remote --file=seed.sql`.
 4. Passwords cannot come across — Supabase stores bcrypt, and Web Crypto cannot verify it.
-   Users are seeded with `password_hash = NULL`, and login rejects those rows.
-   `POST /auth/claim` sets the hash and only works while it is NULL. Each person claims
-   their account once; their uuid, and therefore all their rides, carries over intact.
+   Login rejects rows with a NULL hash. `POST /auth/claim` sets the hash and only works
+   while it is NULL. Claiming preserves the uuid, so all 73 rides stay attached.
 
 ## Errors and validation
 
